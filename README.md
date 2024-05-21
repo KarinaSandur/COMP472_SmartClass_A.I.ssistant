@@ -1,7 +1,10 @@
 # COMP472 SmartClass A.I.ssistant
 An A.I assistant that analyzes the facial expressions of students in a class!
 
-## Team Members
+## Team Members & Group Information
+
+Group: AK-2
+
 Karina Sanchez-Duran (ID: 40189860), Role: Data Specialist & Developer
 
 Marina Girgis (ID: 40168639), Role: Evaluation Specialist & Developer
