@@ -2,12 +2,12 @@ import os
 
 def renameImages(folder, name):
     for count, filename in enumerate(os.listdir(folder)):
+        if filename.endswith(".jpg"):
+            # New Image Name
+            new_filename = f"{name}{count}.jpg" 
 
-        # New Image Name
-        new_filename = f"{name}{count}.jpg" 
-
-        # Saving Image with New Name
-        os.rename(os.path.join(folder, filename), os.path.join(folder, new_filename))
+            # Saving Image with New Name
+            os.rename(os.path.join(folder, filename), os.path.join(folder, new_filename))
 
     print("Finished renaming all images!")
 
