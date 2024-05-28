@@ -18,6 +18,8 @@ def png_to_jpeg_converter(folder):
             # Prints success statement
             print(f"Replaced {file} with {new_file}")
 
+    print("Finished converting PNG images to JPEG!")
+
 
 if __name__ == "__main__":
     input_folder = input("Enter the folder path: ")

@@ -13,7 +13,9 @@ def resizeImages(folder, width, height):
         # Prints Success Statement
         print(f"Resized {file}")
 
+    print("Finished resizing!")
+
 
 if __name__ == "__main__":
     input_folder = input("Enter the folder path: ")
-    resizeImages(input_folder, 600, 600)
+    resizeImages(input_folder, 150, 150)
