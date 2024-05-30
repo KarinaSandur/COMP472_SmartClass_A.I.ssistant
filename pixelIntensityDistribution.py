@@ -3,21 +3,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 import zipfile
+import io
 
-# unzipping function, unzip file to the specified path
-def unzip_data(zip_path, extract_path):
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        zip_ref.extractall(extract_path)
-
-# load the images from a folder and convert them to numpy arrays
-def load_images(folder_path):
+# load images from a zip file and convert them to numpy arrays
+def load_images_from_zip(zip_path):
     images = []
-    for root, _, files in os.walk(folder_path):
-        for file in files:
+    # open zip file in read mode and iterate over each file
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        for file in zip_ref.namelist():
             if file.endswith(('jpg')):
-                img_path = os.path.join(root, file)
-                image = Image.open(img_path).convert('RGB')
-                images.append(np.array(image))
+                # open image file in the zip without extracting it
+                with zip_ref.open(file) as img_file:
+                    # read image file as bytes and open
+                    image = Image.open(io.BytesIO(img_file.read())).convert('RGB')
+                    images.append(np.array(image))
     return images
 
 # calculate pixel intensity distributions
@@ -29,14 +28,11 @@ if __name__ == "__main__":
     data_dir = input("Enter the directory path where your zip files are located: ")
     folders = ['angry', 'focused', 'neutral', 'happy']
 
-    # unzip the data
-    for folder in folders:
-        unzip_data(os.path.join(data_dir, f"{folder}.zip"), os.path.join(data_dir, folder))
-
     pixel_intensity = {}
     for folder in folders:
-        folder_path = os.path.join(data_dir, folder)
-        images = load_images(folder_path)
+        # path to the zip file, load images from the zip file and calculate pixel intensity
+        zip_path = os.path.join(data_dir, f"{folder}.zip")
+        images = load_images_from_zip(zip_path)
         pixel_intensity[folder] = calculate_pixel_intensity(images)
 
     # plot the pixel intensity distributions for each class
