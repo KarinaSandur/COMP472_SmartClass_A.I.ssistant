@@ -60,10 +60,17 @@ Nadia Beauregard (ID: 40128655), Role: Training Specialist & Developer
     <li>The script generates a bar graph showing the number of images in each class: angry, happy, neutral and focused using Matplotlib.</li>
   </ul>
   
-  <li>resizeImages.py</li>
-  
+  <li>pixelIntensityDistribution.py</li>
+  <ul>
+    <li>Python script that takes folder path as input that expects to find one or more zip files in said folder.</li>
+    <li>The script generates a histogram depicting the pixel intensity distribution for each class</li>
+  </ul>
 
-  <li>renameImages.py</li>
+  <li>sampleImagesWithHistogram.py</li>
+  <ul>
+    <li>Python script that takes folder path as input that expects to find one or more zip files in said folder.</li>
+    <li>The script generates histograms depicting the pixel intensity distribution for sample images for each class.</li>
+  </ul>
   
 </ol>
 
