@@ -11,6 +11,26 @@ Marina Girgis (ID: 40168639), Role: Evaluation Specialist & Developer
 
 Nadia Beauregard (ID: 40128655), Role: Training Specialist & Developer
 
+## Steps to Run Python Scripts
+
+<ol type="1">
+  <li>Install Anaconda</li>
+  <li>Create new environment in Anaconda with python version 3.6 or above.</li>
+  <li>Install the following in the newly created environment to be able to run all python scripts</li>
+    <ul>
+      <li>Pillow</li>
+      <li>Numpy</li>
+      <li>Matplotlib</li>
+    </ul>
+  <li>Open the Python files in your chosen IDE and run the scripts inside the newly created environment</li>
+  If you are using Visual Studio Code, do the following:
+    <ol>
+      <li>View >> Command Palette >> Python: Select Interpreter >> [click newly created environement] </li>
+      <li>Right click and select the following: Run Python >> Run Python File in Terminal</li>
+    </ol>
+  
+</ol>
+
 ## File Explanation
 
 <strong>The following folders relate to the data itself:</strong>
@@ -29,7 +49,7 @@ Nadia Beauregard (ID: 40128655), Role: Training Specialist & Developer
   </ul>
 </ol>
 
-<strong>The following Python scripts related to data cleaning and labelling:</strong>
+<strong>The following Python scripts relate to data cleaning and labelling:</strong>
 
 <ol type="1">
   <li>PNGtoJPEGConverter.py</li>
@@ -52,7 +72,7 @@ Nadia Beauregard (ID: 40128655), Role: Training Specialist & Developer
   </ul>
 </ol>
 
-<strong>The following Python scripts related to data visualization:</strong>
+<strong>The following Python scripts relate to data visualization:</strong>
 
 <ol type="1">
   <li>classDistribution.py</li>
