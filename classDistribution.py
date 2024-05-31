@@ -1,10 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as mpl
 
+# Initialize variables
 classes = ['Neutral', 'Angry', 'Happy', 'Focused']
 num_train_pics = [421, 442, 405, 403]
 num_test_pics = [138, 228, 111, 101]
 
+# Plot class distribution
 x = np.arange(len(classes))
 width = 0.30
 
@@ -18,4 +20,5 @@ ax.set_title('Class Distribution')
 ax.set_ylabel('Number of Images')
 ax.legend()
 
+# Display class distribution
 mpl.show()
