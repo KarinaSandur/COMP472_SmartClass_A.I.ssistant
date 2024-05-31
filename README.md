@@ -1,7 +1,7 @@
 # COMP472 SmartClass A.I.ssistant
 An A.I assistant that analyzes the facial expressions of students in a class!
 
-## Team Members & Group Information
+## Team Members, Group Information & Link to Repo
 
 Group: AK-2
 
@@ -10,6 +10,8 @@ Karina Sanchez-Duran (ID: 40189860), Role: Data Specialist & Developer
 Marina Girgis (ID: 40168639), Role: Evaluation Specialist & Developer
 
 Nadia Beauregard (ID: 40128655), Role: Training Specialist & Developer
+
+Link to repo: https://github.com/KarinaSandur/COMP472_SmartClass_A.I.ssistant
 
 ## Steps to Run Python Scripts
 
