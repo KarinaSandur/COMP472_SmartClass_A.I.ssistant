@@ -49,6 +49,20 @@ Nadia Beauregard (ID: 40128655), Role: Training Specialist & Developer
   </ul>
 </ol>
 
+<strong>The following folders relate to documentation:</strong>
+<ol type="1">
+  <li>Representative Images</li>
+  <ul>
+    <li>Contains a zip file with 4 subfolders: angry, happy, neutral and focused./li>
+    <li>Each subfolder contains 25 images and are meant to represent the data of its respective class.</li>
+  </ul>
+  
+  <li>Reports</li>
+  <ul>
+    <li>Contains a pdf of the report for Part 1 of the project.</li>
+  </ul>
+</ol>
+
 <strong>The following Python scripts relate to data cleaning and labelling:</strong>
 
 <ol type="1">
