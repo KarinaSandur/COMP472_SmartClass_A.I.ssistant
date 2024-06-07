@@ -9,13 +9,14 @@ from torch.utils.data import DataLoader, random_split
 import zipfile
 import tempfile
 
-# main Model
+# main model
 class MainModel(nn.Module):
     def __init__(self):
         super(MainModel, self).__init__()
         self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=1, padding=0)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
+        #modify kernel size here
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=2, stride=1, padding=1)
         self.conv_output_size = self._get_conv_output_size()
         self.fc1 = nn.Linear(self.conv_output_size, 128)
         self.fc2 = nn.Linear(128, 4)
@@ -40,7 +41,8 @@ class Variant1(nn.Module):
         def __init__(self):
             super(Variant1, self).__init__()
             self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
-            self.pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=0)
+            # modify kernel size here
+            self.pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=2)
             self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
             self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
             self.conv_output_size = self._get_conv_output_size()
@@ -69,9 +71,10 @@ class Variant2(nn.Module):
     def __init__(self):
         super(Variant2, self).__init__()
         self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
+        # modify kernel size here
         self.pool = nn.MaxPool2d(kernel_size=5, stride=2, padding=0)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
-        self.conv3 = nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=5, stride=1, padding=1)
+        self.conv3 = nn.Conv2d(64, 64, kernel_size=5, stride=1, padding=1)
         self.conv_output_size = self._get_conv_output_size()
         self.fc1 = nn.Linear(self.conv_output_size, 256)
         self.fc2 = nn.Linear(256, 4)
