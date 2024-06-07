@@ -8,14 +8,13 @@ import torchvision.datasets as datasets
 from torch.utils.data import DataLoader, random_split
 import zipfile
 import tempfile
-from PIL import Image
 
 # main Model
 class MainModel(nn.Module):
     def __init__(self):
         super(MainModel, self).__init__()
         self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=0, padding=0)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=1, padding=0)
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
         self.conv_output_size = self._get_conv_output_size()
         self.fc1 = nn.Linear(self.conv_output_size, 128)
