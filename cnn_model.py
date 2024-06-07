@@ -180,14 +180,19 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             best_perf_model_state = model.state_dict()
+            # save the best model state
+            torch.save(best_perf_model_state, 'best_performing_model.pth')
 
         early_stopping(val_loss / len(val_loader))
         if early_stopping.early_stop:
             print("Early stopping")
             break
 
-        # save the best performing model
-    torch.save(best_perf_model_state, 'best_performing_model.pth')
+    # Load the best model state before returning
+    model.load_state_dict(best_perf_model_state)
+
+    # Return the best model state
+    return model
 
 if __name__ == "__main__":
     data_dir = input("Enter the directory path where your zip files are located: ")
