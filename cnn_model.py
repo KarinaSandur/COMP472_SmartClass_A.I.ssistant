@@ -151,7 +151,7 @@ def load_data(temp_dir):
 
 # train and validate model
 def train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs=10):
-    early_stopping = EarlyStopping(patience=5, min_delta=0.001)
+    early_stopping = EarlyStopping(patience=3, min_delta=0.001)
     best_val_loss = float('inf')
     best_perf_model_state = None
 
