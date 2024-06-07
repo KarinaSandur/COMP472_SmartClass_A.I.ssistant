@@ -8,6 +8,7 @@ import torchvision.datasets as datasets
 from torch.utils.data import DataLoader, random_split, Subset
 import zipfile
 import tempfile
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 
 # main model:
 # number of convolutional layers: 2
@@ -152,7 +153,7 @@ def load_data(temp_dir):
 def train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs=10):
     early_stopping = EarlyStopping(patience=5, min_delta=0.001)
     best_val_loss = float('inf')
-    best_model_state = None
+    best_perf_model_state = None
 
     for epoch in range(num_epochs):
         model.train()
@@ -178,7 +179,7 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
-            best_model_state = model.state_dict()
+            best_perf_model_state = model.state_dict()
 
         early_stopping(val_loss / len(val_loader))
         if early_stopping.early_stop:
@@ -186,7 +187,7 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
             break
 
         # save the best performing model
-    torch.save(best_model_state, 'best_model.pth')
+    torch.save(best_perf_model_state, 'best_performing_model.pth')
 
 if __name__ == "__main__":
     data_dir = input("Enter the directory path where your zip files are located: ")
@@ -229,8 +230,66 @@ if __name__ == "__main__":
         train_model(variant1, criterion, optimizer_variant1, train_loader, val_loader, num_epochs)
         print("Model: Variant 2")
         train_model(variant2, criterion, optimizer_variant2, train_loader, val_loader, num_epochs)
+        print("\n")
+        print("\n")
 
-# to load saved model
-#model = MainModel()
-#model.load_state_dict(torch.load('best_model.pth'))
-#model.eval()
+        # evaluate the models
+        models = {
+            'Main Model': main_model,
+            'Variant 1': variant1,
+            'Variant 2': variant2
+        }
+
+        results = {}
+        for name, model in models.items():
+            model.eval()
+            y_true = []
+            y_pred = []
+
+            with torch.no_grad():
+                for inputs, labels in test_loader:
+                    outputs = model(inputs)
+                    _, predicted = torch.max(outputs, 1)
+                    y_true.extend(labels.numpy())
+                    y_pred.extend(predicted.numpy())
+
+            # calculate metrics: macro and micro
+            accuracy = accuracy_score(y_true, y_pred)
+            precision_macro = precision_score(y_true, y_pred, average='macro')
+            recall_macro = recall_score(y_true, y_pred, average='macro')
+            f1_macro = f1_score(y_true, y_pred, average='macro')
+            precision_micro = precision_score(y_true, y_pred, average='micro')
+            recall_micro = recall_score(y_true, y_pred, average='micro')
+            f1_micro = f1_score(y_true, y_pred, average='micro')
+
+            # generate confusion matrix for each model/variant
+            cm = confusion_matrix(y_true, y_pred)
+
+            results[name] = {
+                'accuracy': accuracy,
+                'precision_macro': precision_macro,
+                'recall_macro': recall_macro,
+                'f1_macro': f1_macro,
+                'precision_micro': precision_micro,
+                'recall_micro': recall_micro,
+                'f1_micro': f1_micro,
+                'confusion_matrix': cm
+            }
+
+            # print results
+            for name, metrics in results.items():
+                print(f"Model: {name}")
+                print(f"Accuracy: {metrics['accuracy']:.4f}")
+                print(f"Macro-Precision: {metrics['precision_macro']:.4f}")
+                print(f"Macro-Recall: {metrics['recall_macro']:.4f}")
+                print(f"Macro-F1-Score: {metrics['f1_macro']:.4f}")
+                print(f"Micro-Precision: {metrics['precision_micro']:.4f}")
+                print(f"Micro-Recall: {metrics['recall_micro']:.4f}")
+                print(f"Micro-F1-Score: {metrics['f1_micro']:.4f}")
+                print(f"Confusion Matrix:\n{metrics['confusion_matrix']}")
+                print()
+
+# to use the trained model (after running this code and generating the file):
+# model.load_state_dict(torch.load('best_performing_model.pth'))
+# for this part: You also must have a separate Python program that can load and run the saved model,
+# both on a complete dataset and an individual image (evaluation/application mode).
