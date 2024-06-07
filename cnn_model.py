@@ -9,12 +9,12 @@ from torch.utils.data import DataLoader, random_split
 import zipfile
 import tempfile
 
-# main model: kernel size: 2x2, convolutional layers: 2
+# main model: kernel size: 2x2, # of convolutional layers: 2
 class MainModel(nn.Module):
     def __init__(self):
         super(MainModel, self).__init__()
         self.conv1 = nn.Conv2d(3, 32, kernel_size=2, stride=1, padding=1)
-        #modify kernel size here
+        # modify kernel size here
         self.pool = nn.MaxPool2d(kernel_size=2, stride=1, padding=0)
         self.conv2 = nn.Conv2d(32, 64, kernel_size=2, stride=1, padding=1)
         self.conv_output_size = self._get_conv_output_size()
@@ -36,7 +36,7 @@ class MainModel(nn.Module):
             x = self.pool(F.relu(self.conv2(x)))
             return x.view(1, -1).size(1)
 
-# variant 1: kernel size: 3x3, convolutional layers: 3
+# variant 1: kernel size: 3x3, # of convolutional layers: 3
 class Variant1(nn.Module):
         def __init__(self):
             super(Variant1, self).__init__()
@@ -66,7 +66,7 @@ class Variant1(nn.Module):
                 x = self.pool(F.relu(self.conv3(x)))
                 return x.view(1, -1).size(1)
 
-# variant 2: kernel size: 5x5, 2 convolutional layers
+# variant 2: kernel size: 5x5, # of convolutional layers: 2
 class Variant2(nn.Module):
     def __init__(self):
         super(Variant2, self).__init__()
