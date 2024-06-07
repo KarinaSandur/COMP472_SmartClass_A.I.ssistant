@@ -9,14 +9,14 @@ from torch.utils.data import DataLoader, random_split
 import zipfile
 import tempfile
 
-# main model: kernel size: 2x2, # of convolutional layers: 2
+# main model: kernel size: 3x3, # of convolutional layers: 2
 class MainModel(nn.Module):
     def __init__(self):
         super(MainModel, self).__init__()
-        self.conv1 = nn.Conv2d(3, 32, kernel_size=2, stride=1, padding=1)
+        self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
         # modify kernel size here
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=1, padding=0)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=2, stride=1, padding=1)
+        self.pool = nn.MaxPool2d(kernel_size=3, stride=1, padding=0)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
         self.conv_output_size = self._get_conv_output_size()
         self.fc1 = nn.Linear(self.conv_output_size, 128)
         self.fc2 = nn.Linear(128, 4)
@@ -36,15 +36,15 @@ class MainModel(nn.Module):
             x = self.pool(F.relu(self.conv2(x)))
             return x.view(1, -1).size(1)
 
-# variant 1: kernel size: 3x3, # of convolutional layers: 3
+# variant 1: kernel size: 5x5, # of convolutional layers: 3
 class Variant1(nn.Module):
         def __init__(self):
             super(Variant1, self).__init__()
-            self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
+            self.conv1 = nn.Conv2d(3, 32, kernel_size=5, stride=1, padding=1)
             # modify kernel size here
-            self.pool = nn.MaxPool2d(kernel_size=3, stride=1, padding=0)
-            self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
-            self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
+            self.pool = nn.MaxPool2d(kernel_size=5, stride=1, padding=1)
+            self.conv2 = nn.Conv2d(32, 64, kernel_size=5, stride=1, padding=1)
+            self.conv3 = nn.Conv2d(64, 128, kernel_size=5, stride=1, padding=1)
             self.conv_output_size = self._get_conv_output_size()
             self.fc1 = nn.Linear(self.conv_output_size, 256)
             self.fc2 = nn.Linear(256, 4)
@@ -66,14 +66,14 @@ class Variant1(nn.Module):
                 x = self.pool(F.relu(self.conv3(x)))
                 return x.view(1, -1).size(1)
 
-# variant 2: kernel size: 5x5, # of convolutional layers: 2
+# variant 2: kernel size: 7x7, # of convolutional layers: 2
 class Variant2(nn.Module):
     def __init__(self):
         super(Variant2, self).__init__()
-        self.conv1 = nn.Conv2d(3, 32, kernel_size=5, stride=2, padding=1)
+        self.conv1 = nn.Conv2d(3, 32, kernel_size=7, stride=2, padding=1)
         # modify kernel size here
-        self.pool = nn.MaxPool2d(kernel_size=5, stride=2, padding=1)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=5, stride=2, padding=1)
+        self.pool = nn.MaxPool2d(kernel_size=7, stride=2, padding=1)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=7, stride=2, padding=1)
         self.conv_output_size = self._get_conv_output_size()
         self.fc1 = nn.Linear(self.conv_output_size, 256)
         self.fc2 = nn.Linear(256, 4)
@@ -177,7 +177,7 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
 
 if __name__ == "__main__":
     data_dir = input("Enter the directory path where your zip files are located: ")
-    batch_size = 32
+    batch_size = 64
     num_epochs = 10
 
     with tempfile.TemporaryDirectory() as temp_dir:
