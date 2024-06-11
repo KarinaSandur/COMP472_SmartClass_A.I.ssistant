@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
+from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, random_split, Subset
 import zipfile
 import tempfile
@@ -233,17 +234,14 @@ if __name__ == "__main__":
         unzip_files(data_dir, temp_dir)
         dataset = load_data(temp_dir)
 
-        # split dataset into training and validation sets: 70% training, 15% validation, 15% testing
-        train_size = int(0.7 * len(dataset))
-        val_size = int(0.15 * len(dataset))
-        test_size = len(dataset) - train_size - val_size
+        # split dataset into training 70%, validation 15%, and testing 15%
+        train_data, test_data = train_test_split(dataset, test_size=0.3, random_state=42)
+        val_data, test_data = train_test_split(test_data, test_size=0.5, random_state=42)
 
-        train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, val_size, test_size])
-
-        # create data loaders for training and validation sets
-        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-        val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-        test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+        # create data loaders for training, validation, and testing sets
+        train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+        val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=False)
+        test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=False)
 
         # initialize and train your models
         main_model = MainModel()
