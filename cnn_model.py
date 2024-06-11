@@ -202,6 +202,24 @@ def create_confusion_matrix(y_true, y_pred):
         cm[true][pred] += 1
     return cm
 
+# Visualize confusion matrix as a heatmap
+def visualize_confusion_matrix(cm, name):
+    plt.imshow(cm, cmap='Oranges', interpolation='nearest')
+
+    # Add numbers in cell
+    for i in range(4):
+        for j in range(4):
+            plt.text(j, i, str(cm[i][j]), ha='center', va='center', color='black')
+            
+    plt.colorbar()
+    plt.xticks(range(4), ['angry', 'focused', 'happy', 'neutral'])
+    plt.yticks(range(4), ['angry', 'focused', 'happy', 'neutral'])
+    plt.xlabel('Predicted labels')
+    plt.ylabel('True labels')
+    plt.title('Confusion Matrix for ' + f"{name}")
+    plt.show()
+
+
 # #################################################################################################
 # MAIN METHOD
 # #################################################################################################
@@ -282,22 +300,8 @@ if __name__ == "__main__":
 
             # Create  confusion matrix
             cm = create_confusion_matrix(y_true, y_pred)
-
-            # Visualize confusion matrix as a heatmap
-            plt.imshow(cm, cmap='Oranges', interpolation='nearest')
-
-            # Add numbers in cell
-            for i in range(4):
-                for j in range(4):
-                    plt.text(j, i, str(cm[i][j]), ha='center', va='center', color='black')
+            visualize_confusion_matrix(cm, name)
             
-            plt.colorbar()
-            plt.xticks(range(4), ['angry', 'focused', 'happy', 'neutral'])
-            plt.yticks(range(4), ['angry', 'focused', 'happy', 'neutral'])
-            plt.xlabel('Predicted labels')
-            plt.ylabel('True labels')
-            plt.title('Confusion Matrix')
-            plt.show()
 
             results[name] = {
                 'accuracy': accuracy,
