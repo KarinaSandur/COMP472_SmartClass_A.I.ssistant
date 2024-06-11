@@ -270,8 +270,8 @@ if __name__ == "__main__":
 
             # Function to create confusion matrix
             def create_confusion_matrix(y_true, y_pred):
-                num_classes = len(np.unique(y_true))
-                cm = np.zeros((num_classes, num_classes), dtype=int)
+                # num_classes = len(np.unique(y_true))
+                cm = np.zeros((4, 4), dtype=int)
                 for true, pred in zip(y_true, y_pred):
                     cm[true][pred] += 1
                 return cm
@@ -282,6 +282,8 @@ if __name__ == "__main__":
             # Visualize confusion matrix as a heatmap
             plt.imshow(cm, cmap='Blues', interpolation='nearest')
             plt.colorbar()
+            plt.xticks(range(4), ['angry', 'focused', 'happy', 'neutral'])
+            plt.yticks(range(4), ['angry', 'focused', 'happy', 'neutral'])
             plt.xlabel('Predicted labels')
             plt.ylabel('True labels')
             plt.title('Confusion Matrix')
