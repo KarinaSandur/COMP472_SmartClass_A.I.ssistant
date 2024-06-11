@@ -327,6 +327,8 @@ if __name__ == "__main__":
             print()
 
         # determine the best model based on overall performance across all metrics
+        # the sum of all metrics except the confusion matrix is calculated for each model,
+        # the model with the highest sum of these metrics is considered the best model
         best_model_name = max(results, key=lambda x: sum(results[x][metric] for metric in results[x] if metric != 'confusion_matrix'))
         best_model = models[best_model_name]
         best_model_metrics = results[best_model_name]
