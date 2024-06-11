@@ -258,11 +258,11 @@ if __name__ == "__main__":
         optimizer_variant2 = torch.optim.Adam(variant2.parameters(), lr=0.001)
 
         # train each model with early stopping
-        print("Model: Main Model (based on validation set)")
+        print("Model: Main Model")
         main_model = train_model(main_model, criterion, optimizer_main, train_loader, val_loader, num_epochs)
-        print("Model: Variant 1 (based on validation set)")
+        print("Model: Variant 1")
         variant1 = train_model(variant1, criterion, optimizer_variant1, train_loader, val_loader, num_epochs)
-        print("Model: Variant 2 (based on validation set)")
+        print("Model: Variant 2")
         variant2 = train_model(variant2, criterion, optimizer_variant2, train_loader, val_loader, num_epochs)
         print("\n")
         print("\n")
