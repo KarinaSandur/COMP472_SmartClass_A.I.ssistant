@@ -195,6 +195,17 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
     # Return the best model state
     return model
 
+ # Function to create confusion matrix
+def create_confusion_matrix(y_true, y_pred):
+    cm = np.zeros((4, 4), dtype=int)
+    for true, pred in zip(y_true, y_pred):
+        cm[true][pred] += 1
+    return cm
+
+# #################################################################################################
+# MAIN METHOD
+# #################################################################################################
+
 if __name__ == "__main__":
     data_dir = input("Enter the directory path where your zip files are located: ")
     batch_size = 32
@@ -247,6 +258,7 @@ if __name__ == "__main__":
         }
 
         results = {}
+        
         for name, model in models.items():
             model.eval()
             y_true = []
@@ -268,19 +280,17 @@ if __name__ == "__main__":
             recall_micro = recall_score(y_true, y_pred, average='micro')
             f1_micro = f1_score(y_true, y_pred, average='micro')
 
-            # Function to create confusion matrix
-            def create_confusion_matrix(y_true, y_pred):
-                # num_classes = len(np.unique(y_true))
-                cm = np.zeros((4, 4), dtype=int)
-                for true, pred in zip(y_true, y_pred):
-                    cm[true][pred] += 1
-                return cm
-
             # Create  confusion matrix
             cm = create_confusion_matrix(y_true, y_pred)
 
             # Visualize confusion matrix as a heatmap
-            plt.imshow(cm, cmap='Blues', interpolation='nearest')
+            plt.imshow(cm, cmap='Oranges', interpolation='nearest')
+
+            # Add numbers in cell
+            for i in range(4):
+                for j in range(4):
+                    plt.text(j, i, str(cm[i][j]), ha='center', va='center', color='black')
+            
             plt.colorbar()
             plt.xticks(range(4), ['angry', 'focused', 'happy', 'neutral'])
             plt.yticks(range(4), ['angry', 'focused', 'happy', 'neutral'])
