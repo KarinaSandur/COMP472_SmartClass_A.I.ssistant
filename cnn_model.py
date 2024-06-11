@@ -6,10 +6,10 @@ import torch.nn.functional as F
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 from sklearn.model_selection import train_test_split
-from torch.utils.data import DataLoader, random_split, Subset
+from torch.utils.data import DataLoader
 import zipfile
 import tempfile
-from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
 
 # main model:
@@ -155,7 +155,7 @@ def load_data(temp_dir):
 def train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs=10):
     early_stopping = EarlyStopping(patience=3, min_delta=0.001)
     best_val_loss = float('inf')
-    best_perf_model_state = None
+    best_model_state = None
 
     for epoch in range(num_epochs):
         model.train()
@@ -168,6 +168,7 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
             optimizer.step()
             running_loss += loss.item()
 
+        # initialize validation loss
         val_loss = 0.0
         model.eval()
         with torch.no_grad():
@@ -179,21 +180,21 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
         print(
             f"Epoch {epoch + 1}, Training Loss: {running_loss / len(train_loader)}, Validation Loss: {val_loss / len(val_loader)}")
 
+        # check if the current validation loss is better than the best validation loss
+        # update the best validation loss, save state of best model to file
         if val_loss < best_val_loss:
             best_val_loss = val_loss
-            best_perf_model_state = model.state_dict()
-            # save the best model state
-            torch.save(best_perf_model_state, 'best_performing_model.pth')
+            best_model_state = model.state_dict()
+            torch.save(best_model_state, f"best_model_{model.__class__.__name__}.pth")
 
+        # check if early stopping condition is met
         early_stopping(val_loss / len(val_loader))
         if early_stopping.early_stop:
             print("Early stopping")
             break
 
-    # Load the best model state before returning
-    model.load_state_dict(best_perf_model_state)
-
-    # Return the best model state
+    # load the best model state and return it
+    model.load_state_dict(best_model_state)
     return model
 
  # Function to create confusion matrix
@@ -258,11 +259,11 @@ if __name__ == "__main__":
 
         # train each model with early stopping
         print("Model: Main Model")
-        train_model(main_model, criterion, optimizer_main, train_loader, val_loader, num_epochs)
+        main_model = train_model(main_model, criterion, optimizer_main, train_loader, val_loader, num_epochs)
         print("Model: Variant 1")
-        train_model(variant1, criterion, optimizer_variant1, train_loader, val_loader, num_epochs)
+        variant1 = train_model(variant1, criterion, optimizer_variant1, train_loader, val_loader, num_epochs)
         print("Model: Variant 2")
-        train_model(variant2, criterion, optimizer_variant2, train_loader, val_loader, num_epochs)
+        variant2 = train_model(variant2, criterion, optimizer_variant2, train_loader, val_loader, num_epochs)
         print("\n")
         print("\n")
 
@@ -274,14 +275,14 @@ if __name__ == "__main__":
         }
 
         results = {}
-        
+
         for name, model in models.items():
             model.eval()
             y_true = []
             y_pred = []
 
             with torch.no_grad():
-                for inputs, labels in test_loader:
+                for inputs, labels in val_loader:
                     outputs = model(inputs)
                     _, predicted = torch.max(outputs, 1)
                     y_true.extend(labels.numpy())
@@ -324,6 +325,46 @@ if __name__ == "__main__":
             print(f"Micro-F1-Score: {metrics['f1_micro']:.4f}")
             print(f"Confusion Matrix:\n{metrics['confusion_matrix']}")
             print()
+
+        # determine the best model based on overall performance across all metrics
+        best_model_name = max(results, key=lambda x: sum(results[x][metric] for metric in results[x] if metric != 'confusion_matrix'))
+        best_model = models[best_model_name]
+        best_model_metrics = results[best_model_name]
+
+        # save the best performing model out of the three (main model, variant 1, variant 2)
+        torch.save(best_model.state_dict(), 'best_performing_model.pth')
+
+        # evaluate the best model on the test set
+        # to be clear: validation set is used to determine the best performance of each model,
+        # then calculate the evaluation metrics on the test set using the best performing model
+        best_model.eval()
+        y_true_test = []
+        y_pred_test = []
+
+        with torch.no_grad():
+            for inputs, labels in test_loader:
+                outputs = best_model(inputs)
+                _, predicted = torch.max(outputs, 1)
+                y_true_test.extend(labels.numpy())
+                y_pred_test.extend(predicted.numpy())
+
+        # calculate metrics on the validation set
+        test_accuracy = accuracy_score(y_true_test, y_pred_test)
+        test_precision_macro = precision_score(y_true_test, y_pred_test, average='macro')
+        test_recall_macro = recall_score(y_true_test, y_pred_test, average='macro')
+        test_f1_macro = f1_score(y_true_test, y_pred_test, average='macro')
+        test_precision_micro = precision_score(y_true_test, y_pred_test, average='micro')
+        test_recall_micro = recall_score(y_true_test, y_pred_test, average='micro')
+        test_f1_micro = f1_score(y_true_test, y_pred_test, average='micro')
+
+        print(f"\nBest Performing Model out of all 3: {best_model_name}")
+        print(f"Test Accuracy: {test_accuracy:.4f}")
+        print(f"Test Macro-Precision: {test_precision_macro:.4f}")
+        print(f"Test Macro-Recall: {test_recall_macro:.4f}")
+        print(f"Test Macro-F1-Score: {test_f1_macro:.4f}")
+        print(f"Test Micro-Precision: {test_precision_micro:.4f}")
+        print(f"Test Micro-Recall: {test_recall_micro:.4f}")
+        print(f"Test Micro-F1-Score: {test_f1_micro:.4f}")
         
         # Results from different models
         main_model_info = results.get("Main Model",{})
@@ -369,6 +410,6 @@ if __name__ == "__main__":
         plt.show()
 
 # to use the trained model (after running this code and generating the file):
-# model.load_state_dict(torch.load('best_performing_model.pth'))
+# model.load_state_dict(torch.load('file name'))
 # for this part: You also must have a separate Python program that can load and run the saved model,
 # both on a complete dataset and an individual image (evaluation/application mode).
