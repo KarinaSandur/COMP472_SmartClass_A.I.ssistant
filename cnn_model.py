@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader, random_split, Subset
 import zipfile
 import tempfile
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+import matplotlib.pyplot as plt
 
 # main model:
 # number of convolutional layers: 2
@@ -194,6 +195,35 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
     # Return the best model state
     return model
 
+ # Function to create confusion matrix
+def create_confusion_matrix(y_true, y_pred):
+    cm = np.zeros((4, 4), dtype=int)
+    for true, pred in zip(y_true, y_pred):
+        cm[true][pred] += 1
+    return cm
+
+# Visualize confusion matrix as a heatmap
+def visualize_confusion_matrix(cm, name):
+    plt.imshow(cm, cmap='Oranges', interpolation='nearest')
+
+    # Add numbers in cell
+    for i in range(4):
+        for j in range(4):
+            plt.text(j, i, str(cm[i][j]), ha='center', va='center', color='black')
+            
+    plt.colorbar()
+    plt.xticks(range(4), ['angry', 'focused', 'happy', 'neutral'])
+    plt.yticks(range(4), ['angry', 'focused', 'happy', 'neutral'])
+    plt.xlabel('Predicted labels')
+    plt.ylabel('True labels')
+    plt.title('Confusion Matrix for ' + f"{name}")
+    plt.show()
+
+
+# #################################################################################################
+# MAIN METHOD
+# #################################################################################################
+
 if __name__ == "__main__":
     data_dir = input("Enter the directory path where your zip files are located: ")
     batch_size = 32
@@ -246,6 +276,7 @@ if __name__ == "__main__":
         }
 
         results = {}
+        
         for name, model in models.items():
             model.eval()
             y_true = []
@@ -267,8 +298,10 @@ if __name__ == "__main__":
             recall_micro = recall_score(y_true, y_pred, average='micro')
             f1_micro = f1_score(y_true, y_pred, average='micro')
 
-            # generate confusion matrix for each model/variant
-            cm = confusion_matrix(y_true, y_pred)
+            # Create  confusion matrix
+            cm = create_confusion_matrix(y_true, y_pred)
+            visualize_confusion_matrix(cm, name)
+            
 
             results[name] = {
                 'accuracy': accuracy,
@@ -281,18 +314,61 @@ if __name__ == "__main__":
                 'confusion_matrix': cm
             }
 
-            # print results
-            for name, metrics in results.items():
-                print(f"Model: {name}")
-                print(f"Accuracy: {metrics['accuracy']:.4f}")
-                print(f"Macro-Precision: {metrics['precision_macro']:.4f}")
-                print(f"Macro-Recall: {metrics['recall_macro']:.4f}")
-                print(f"Macro-F1-Score: {metrics['f1_macro']:.4f}")
-                print(f"Micro-Precision: {metrics['precision_micro']:.4f}")
-                print(f"Micro-Recall: {metrics['recall_micro']:.4f}")
-                print(f"Micro-F1-Score: {metrics['f1_micro']:.4f}")
-                print(f"Confusion Matrix:\n{metrics['confusion_matrix']}")
-                print()
+        # print results in terminal
+        for name, metrics in results.items():
+            print(f"Model: {name}")
+            print(f"Accuracy: {metrics['accuracy']:.4f}")
+            print(f"Macro-Precision: {metrics['precision_macro']:.4f}")
+            print(f"Macro-Recall: {metrics['recall_macro']:.4f}")
+            print(f"Macro-F1-Score: {metrics['f1_macro']:.4f}")
+            print(f"Micro-Precision: {metrics['precision_micro']:.4f}")
+            print(f"Micro-Recall: {metrics['recall_micro']:.4f}")
+            print(f"Micro-F1-Score: {metrics['f1_micro']:.4f}")
+            print(f"Confusion Matrix:\n{metrics['confusion_matrix']}")
+            print()
+        
+        # Results from different models
+        main_model_info = results.get("Main Model",{})
+        mm_accuracy = round(main_model_info.get("accuracy"), 4)
+        mm_precision_macro = round(main_model_info.get("precision_macro"), 4)
+        mm_recall_macro = round(main_model_info.get("recall_macro"), 4)
+        mm_f1_macro = round(main_model_info.get("f1_macro"), 4)
+        mm_precision_micro = round(main_model_info.get("precision_micro"), 4)
+        mm_recall_micro = round(main_model_info.get("recall_micro"), 4)
+        mm_f1_micro = round(main_model_info.get("f1_micro"), 4)
+
+        variant1_info = results.get('Variant 1', {})
+        v1_accuracy = round(variant1_info.get("accuracy"), 4)
+        v1_precision_macro = round(variant1_info.get("precision_macro"), 4)
+        v1_recall_macro = round(variant1_info.get("recall_macro"), 4)
+        v1_f1_macro = round(variant1_info.get("f1_macro"), 4)
+        v1_precision_micro = round(variant1_info.get("precision_micro"), 4)
+        v1_recall_micro = round(variant1_info.get("recall_micro"), 4)
+        v1_f1_micro = round(variant1_info.get("f1_micro"), 4)
+
+        variant2_info = results.get('Variant 2', {})
+        v2_accuracy = round(variant2_info.get("accuracy"), 4)
+        v2_precision_macro = round(variant2_info.get("precision_macro"), 4)
+        v2_recall_macro = round(variant2_info.get("recall_macro"), 4)
+        v2_f1_macro = round(variant2_info.get("f1_macro"), 4)
+        v2_precision_micro = round(variant2_info.get("precision_micro"), 4)
+        v2_recall_micro = round(variant2_info.get("recall_micro"), 4)
+        v2_f1_micro = round(variant2_info.get("f1_micro"), 4)
+
+        # Initialize data that will go in table
+        data = [
+            ['Model', 'Macro P', 'Macro R', 'Macro F', 'Micro P', 'Micro R', 'Micro F', 'Accuracy'],
+            ["Main Model", mm_precision_macro, mm_recall_macro, mm_f1_macro, mm_precision_micro, mm_recall_micro, mm_f1_micro, mm_accuracy],
+            ["Variation 1", v1_precision_macro, v1_recall_macro, v1_f1_macro, v1_precision_micro, v1_recall_micro, v1_f1_micro, v1_accuracy],
+            ["Variation 2", v2_precision_macro, v2_recall_macro, v2_f1_macro, v2_precision_micro, v2_recall_micro, v2_f1_micro, v2_accuracy],
+        ]
+
+        # Create table
+        fig, ax = plt.subplots()
+        ax.axis('off')  # Hide axes
+        ax.table(cellText=data, loc='center')
+
+        plt.show()
 
 # to use the trained model (after running this code and generating the file):
 # model.load_state_dict(torch.load('best_performing_model.pth'))
