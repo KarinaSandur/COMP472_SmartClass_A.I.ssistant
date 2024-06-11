@@ -258,11 +258,11 @@ if __name__ == "__main__":
         optimizer_variant2 = torch.optim.Adam(variant2.parameters(), lr=0.001)
 
         # train each model with early stopping
-        print("Model: Main Model")
+        print("Model: Main Model (based on validation set)")
         main_model = train_model(main_model, criterion, optimizer_main, train_loader, val_loader, num_epochs)
-        print("Model: Variant 1")
+        print("Model: Variant 1 (based on validation set)")
         variant1 = train_model(variant1, criterion, optimizer_variant1, train_loader, val_loader, num_epochs)
-        print("Model: Variant 2")
+        print("Model: Variant 2 (based on validation set)")
         variant2 = train_model(variant2, criterion, optimizer_variant2, train_loader, val_loader, num_epochs)
         print("\n")
         print("\n")
@@ -357,7 +357,7 @@ if __name__ == "__main__":
         test_recall_micro = recall_score(y_true_test, y_pred_test, average='micro')
         test_f1_micro = f1_score(y_true_test, y_pred_test, average='micro')
 
-        print(f"\nBest Performing Model out of all 3: {best_model_name}")
+        print(f"\nBest Performing Model on test set out of all 3: {best_model_name}")
         print(f"Test Accuracy: {test_accuracy:.4f}")
         print(f"Test Macro-Precision: {test_precision_macro:.4f}")
         print(f"Test Macro-Recall: {test_recall_macro:.4f}")
