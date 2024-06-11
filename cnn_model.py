@@ -268,8 +268,24 @@ if __name__ == "__main__":
             recall_micro = recall_score(y_true, y_pred, average='micro')
             f1_micro = f1_score(y_true, y_pred, average='micro')
 
-            # generate confusion matrix for each model/variant
-            cm = confusion_matrix(y_true, y_pred)
+            # Function to create confusion matrix
+            def create_confusion_matrix(y_true, y_pred):
+                num_classes = len(np.unique(y_true))
+                cm = np.zeros((num_classes, num_classes), dtype=int)
+                for true, pred in zip(y_true, y_pred):
+                    cm[true][pred] += 1
+                return cm
+
+            # Create  confusion matrix
+            cm = create_confusion_matrix(y_true, y_pred)
+
+            # Visualize confusion matrix as a heatmap
+            plt.imshow(cm, cmap='Blues', interpolation='nearest')
+            plt.colorbar()
+            plt.xlabel('Predicted labels')
+            plt.ylabel('True labels')
+            plt.title('Confusion Matrix')
+            plt.show()
 
             results[name] = {
                 'accuracy': accuracy,
