@@ -12,6 +12,9 @@ import tempfile
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
 
+# set random seed for consistent runs (if we want each run to be different, remove this part)
+torch.manual_seed(42)
+
 # main model:
 # number of convolutional layers: 2
 # conv1: 3x3 kernel
