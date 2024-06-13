@@ -132,7 +132,7 @@ class EarlyStopping:
 
 # unzip files into a temporary directory
 def unzip_files(data_dir, temp_dir):
-    folders = ['angry', 'focused', 'neutral', 'happy']
+    folders = ['angry', 'focused', 'happy', 'neutral']
     for folder in folders:
         zip_path = os.path.join(data_dir, f"{folder}.zip")
         if os.path.exists(zip_path):
