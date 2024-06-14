@@ -300,7 +300,7 @@ if __name__ == "__main__":
             recall_micro = recall_score(y_true, y_pred, average='micro')
             f1_micro = f1_score(y_true, y_pred, average='micro')
 
-            # Create  confusion matrix
+            # Create confusion matrix
             cm = create_confusion_matrix(y_true, y_pred)
             visualize_confusion_matrix(cm, name)
             
@@ -353,7 +353,7 @@ if __name__ == "__main__":
                 y_true_test.extend(labels.numpy())
                 y_pred_test.extend(predicted.numpy())
 
-        # calculate metrics on the validation set
+        # calculate metrics on the test set
         test_accuracy = accuracy_score(y_true_test, y_pred_test)
         test_precision_macro = precision_score(y_true_test, y_pred_test, average='macro')
         test_recall_macro = recall_score(y_true_test, y_pred_test, average='macro')

@@ -1,3 +1,4 @@
+from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 import torch 
 import torch.nn as nn
@@ -8,6 +9,9 @@ import cnn_model
 import os
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
+import zipfile
+import tempfile
+
 
 # Initialize models
 mainModel = cnn_model.MainModel()
@@ -19,12 +23,8 @@ mainModel.load_state_dict(torch.load("best_model_MainModel.pth"))
 var1Model.load_state_dict(torch.load("best_model_Variant1.pth"))
 var2Model.load_state_dict(torch.load("best_model_Variant2.pth"))
 
-# Set the models to evaluation mode
-# mainModel.eval()
-# var1Model.eval()
-# var2Model.eval()
 
- # Function to create confusion matrix
+# Function to create confusion matrix
 def create_confusion_matrix(y_true, y_pred):
     cm = np.zeros((4, 4), dtype=int)
     for true, pred in zip(y_true, y_pred):
@@ -48,38 +48,108 @@ def visualize_confusion_matrix(cm, name):
     plt.title('Confusion Matrix for ' + f"{name}")
     plt.show()
 
-# evaluate the models
-models = {
-    'Main Model': mainModel,
-    'Variant 1': var1Model,
-    'Variant 2': var2Model
-}
+if __name__ == "__main__":
+    data_dir = input("Enter the directory path where your zip files are located: ")
+    batch_size = 32
 
-# Evaluate them
-for name, model in models.items():
-    model.eval()
-    y_true = []
-    y_pred = []
+    results = {}
 
-    with torch.no_grad():
-        for inputs, labels in cnn_model.test_loader:
-            outputs = model(inputs)
-            _, predicted = torch.max(outputs, 1)
-            y_true.extend(labels.numpy())
-            y_pred.extend(predicted.numpy())
+    with tempfile.TemporaryDirectory() as temp_dir:
+        cnn_model.unzip_files(data_dir, temp_dir)
+        dataset = cnn_model.load_data(temp_dir)
 
-    # calculate metrics: macro and micro
-    accuracy = accuracy_score(y_true, y_pred)
-    precision_macro = precision_score(y_true, y_pred, average='macro')
-    recall_macro = recall_score(y_true, y_pred, average='macro')
-    f1_macro = f1_score(y_true, y_pred, average='macro')
-    precision_micro = precision_score(y_true, y_pred, average='micro')
-    recall_micro = recall_score(y_true, y_pred, average='micro')
-    f1_micro = f1_score(y_true, y_pred, average='micro')
+        # split dataset into training 70%, validation 15%, and testing 15%
+        train_data, test_data = train_test_split(dataset, test_size=0.3, random_state=42)
+        val_data, test_data = train_test_split(test_data, test_size=0.5, random_state=42)
 
-    # Create  confusion matrix
-    cm = create_confusion_matrix(y_true, y_pred)
-    visualize_confusion_matrix(cm, name)
+        # create data loaders for training, validation, and testing sets
+        train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+        val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=False)
+        test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=False)
+
+        # Evaluate the models
+        models = {
+            'Main Model': mainModel,
+            'Variant 1': var1Model,
+            'Variant 2': var2Model
+        }
+
+        for name, model in models.items():
+            model.eval()
+            y_true = []
+            y_pred = []
+
+            with torch.no_grad():
+                for inputs, labels in test_loader:
+                    outputs = model(inputs)
+                    _, predicted = torch.max(outputs, 1)
+                    y_true.extend(labels.numpy())
+                    y_pred.extend(predicted.numpy())
+
+            # calculate metrics: macro and micro
+            accuracy = accuracy_score(y_true, y_pred)
+            precision_macro = precision_score(y_true, y_pred, average='macro')
+            recall_macro = recall_score(y_true, y_pred, average='macro')
+            f1_macro = f1_score(y_true, y_pred, average='macro')
+            precision_micro = precision_score(y_true, y_pred, average='micro')
+            recall_micro = recall_score(y_true, y_pred, average='micro')
+            f1_micro = f1_score(y_true, y_pred, average='micro')
+
+            # Create  confusion matrix
+            cm = create_confusion_matrix(y_true, y_pred)
+            visualize_confusion_matrix(cm, name)
+
+            results[name] = {
+                'accuracy': accuracy,
+                'precision_macro': precision_macro,
+                'recall_macro': recall_macro,
+                'f1_macro': f1_macro,
+                'precision_micro': precision_micro,
+                'recall_micro': recall_micro,
+                'f1_micro': f1_micro,
+                'confusion_matrix': cm
+            }
 
 
-# Generate confusion matrices for each and table summarizing metrics
+        # Results from different models
+        main_model_info = results.get("Main Model",{})
+        mm_accuracy = round(main_model_info.get("accuracy"), 4)
+        mm_precision_macro = round(main_model_info.get("precision_macro"), 4)
+        mm_recall_macro = round(main_model_info.get("recall_macro"), 4)
+        mm_f1_macro = round(main_model_info.get("f1_macro"), 4)
+        mm_precision_micro = round(main_model_info.get("precision_micro"), 4)
+        mm_recall_micro = round(main_model_info.get("recall_micro"), 4)
+        mm_f1_micro = round(main_model_info.get("f1_micro"), 4)
+
+        variant1_info = results.get('Variant 1', {})
+        v1_accuracy = round(variant1_info.get("accuracy"), 4)
+        v1_precision_macro = round(variant1_info.get("precision_macro"), 4)
+        v1_recall_macro = round(variant1_info.get("recall_macro"), 4)
+        v1_f1_macro = round(variant1_info.get("f1_macro"), 4)
+        v1_precision_micro = round(variant1_info.get("precision_micro"), 4)
+        v1_recall_micro = round(variant1_info.get("recall_micro"), 4)
+        v1_f1_micro = round(variant1_info.get("f1_micro"), 4)
+
+        variant2_info = results.get('Variant 2', {})
+        v2_accuracy = round(variant2_info.get("accuracy"), 4)
+        v2_precision_macro = round(variant2_info.get("precision_macro"), 4)
+        v2_recall_macro = round(variant2_info.get("recall_macro"), 4)
+        v2_f1_macro = round(variant2_info.get("f1_macro"), 4)
+        v2_precision_micro = round(variant2_info.get("precision_micro"), 4)
+        v2_recall_micro = round(variant2_info.get("recall_micro"), 4)
+        v2_f1_micro = round(variant2_info.get("f1_micro"), 4)
+
+        # Initialize data that will go in table
+        data = [
+            ['Model', 'Macro P', 'Macro R', 'Macro F', 'Micro P', 'Micro R', 'Micro F', 'Accuracy'],
+            ["Main Model", mm_precision_macro, mm_recall_macro, mm_f1_macro, mm_precision_micro, mm_recall_micro, mm_f1_micro, mm_accuracy],
+            ["Variation 1", v1_precision_macro, v1_recall_macro, v1_f1_macro, v1_precision_micro, v1_recall_micro, v1_f1_micro, v1_accuracy],
+            ["Variation 2", v2_precision_macro, v2_recall_macro, v2_f1_macro, v2_precision_micro, v2_recall_micro, v2_f1_micro, v2_accuracy],
+        ]
+
+        # Create table
+        fig, ax = plt.subplots()
+        ax.axis('off')  # Hide axes
+        ax.table(cellText=data, loc='center')
+
+        plt.show()
