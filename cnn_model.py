@@ -12,6 +12,9 @@ import tempfile
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
 
+# set random seed for consistent runs (if we want each run to be different, remove this part)
+torch.manual_seed(42)
+
 # main model:
 # number of convolutional layers: 2
 # conv1: 3x3 kernel
@@ -132,7 +135,7 @@ class EarlyStopping:
 
 # unzip files into a temporary directory
 def unzip_files(data_dir, temp_dir):
-    folders = ['angry', 'focused', 'neutral', 'happy']
+    folders = ['angry', 'focused', 'happy', 'neutral']
     for folder in folders:
         zip_path = os.path.join(data_dir, f"{folder}.zip")
         if os.path.exists(zip_path):
@@ -282,7 +285,7 @@ if __name__ == "__main__":
             y_pred = []
 
             with torch.no_grad():
-                for inputs, labels in val_loader:
+                for inputs, labels in test_loader:
                     outputs = model(inputs)
                     _, predicted = torch.max(outputs, 1)
                     y_true.extend(labels.numpy())
@@ -297,7 +300,7 @@ if __name__ == "__main__":
             recall_micro = recall_score(y_true, y_pred, average='micro')
             f1_micro = f1_score(y_true, y_pred, average='micro')
 
-            # Create  confusion matrix
+            # Create confusion matrix
             cm = create_confusion_matrix(y_true, y_pred)
             visualize_confusion_matrix(cm, name)
             
@@ -350,7 +353,7 @@ if __name__ == "__main__":
                 y_true_test.extend(labels.numpy())
                 y_pred_test.extend(predicted.numpy())
 
-        # calculate metrics on the validation set
+        # calculate metrics on the test set
         test_accuracy = accuracy_score(y_true_test, y_pred_test)
         test_precision_macro = precision_score(y_true_test, y_pred_test, average='macro')
         test_recall_macro = recall_score(y_true_test, y_pred_test, average='macro')
