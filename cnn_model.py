@@ -285,7 +285,7 @@ if __name__ == "__main__":
             y_pred = []
 
             with torch.no_grad():
-                for inputs, labels in val_loader:
+                for inputs, labels in test_loader:
                     outputs = model(inputs)
                     _, predicted = torch.max(outputs, 1)
                     y_true.extend(labels.numpy())

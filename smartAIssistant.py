@@ -6,7 +6,7 @@ import cnn_model
 import os
 
 # Initialize model
-model = cnn_model.Variant2()
+model = cnn_model.Variant1()
 
 # Load the model
 model.load_state_dict(torch.load("best_performing_model.pth"))
