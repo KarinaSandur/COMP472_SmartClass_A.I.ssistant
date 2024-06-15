@@ -16,13 +16,48 @@ import matplotlib.pyplot as plt
 torch.manual_seed(42)
 
 # main model:
+# number of convolutional layers: 3
+# conv1: 3x3 kernel
+# max pooling: 2x2 kernel (better performance)
+# conv2: 3x3 kernel
+# conv3: 3x3 kernel
+class MainModel(nn.Module):
+    def __init__(self):
+        super(MainModel, self).__init__()
+        self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
+        # modify kernel size here
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
+        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
+        self.conv_output_size = self._get_conv_output_size()
+        self.fc1 = nn.Linear(self.conv_output_size, 128)
+        self.fc2 = nn.Linear(128, 4)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = self.pool(F.relu(self.conv3(x)))
+        x = x.view(-1, self.conv_output_size)
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+    def _get_conv_output_size(self):
+        with torch.no_grad():
+            x = torch.zeros(1, 3, 150, 150)
+            x = self.pool(F.relu(self.conv1(x)))
+            x = self.pool(F.relu(self.conv2(x)))
+            x = self.pool(F.relu(self.conv3(x)))
+            return x.view(1, -1).size(1)
+        
+# main model:
 # number of convolutional layers: 2
 # conv1: 3x3 kernel
 # max pooling: 2x2 kernel (better performance)
 # conv2: 3x3 kernel
-class MainModel(nn.Module):
+class Variant1(nn.Module):
     def __init__(self):
-        super(MainModel, self).__init__()
+        super(Variant1, self).__init__()
         self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
         # modify kernel size here
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
@@ -46,15 +81,15 @@ class MainModel(nn.Module):
             x = self.pool(F.relu(self.conv2(x)))
             return x.view(1, -1).size(1)
 
-# variant 1:
+# variant 2:
 # number of convolutional layers: 3
 # conv1: 5x5 kernel
 # max pooling: 2x2 kernel (better performance)
 # conv2: 5x5 kernel
 # conv3: 5x5 kernel
-class Variant1(nn.Module):
+class Variant2(nn.Module):
         def __init__(self):
-            super(Variant1, self).__init__()
+            super(Variant2, self).__init__()
             self.conv1 = nn.Conv2d(3, 32, kernel_size=5, stride=1, padding=1)
             # modify kernel size here
             self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
@@ -81,36 +116,7 @@ class Variant1(nn.Module):
                 x = self.pool(F.relu(self.conv3(x)))
                 return x.view(1, -1).size(1)
 
-# variant 2:
-# number of convolutional layers: 2
-# conv1: 7x7 kernel
-# max pooling: 3x3 kernel (better performance)
-# conv2: 7x7 kernel
-class Variant2(nn.Module):
-    def __init__(self):
-        super(Variant2, self).__init__()
-        self.conv1 = nn.Conv2d(3, 32, kernel_size=7, stride=2, padding=1)
-        # modify kernel size here
-        self.pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=0)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=7, stride=2, padding=1)
-        self.conv_output_size = self._get_conv_output_size()
-        self.fc1 = nn.Linear(self.conv_output_size, 256)
-        self.fc2 = nn.Linear(256, 4)
 
-    def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, self.conv_output_size)
-        x = F.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
-
-    def _get_conv_output_size(self):
-        with torch.no_grad():
-            x = torch.zeros(1, 3, 150, 150)
-            x = self.pool(F.relu(self.conv1(x)))
-            x = self.pool(F.relu(self.conv2(x)))
-            return x.view(1, -1).size(1)
 
 # early stopping class to monitor validation loss and stop training if it doesn't improve
 class EarlyStopping:
