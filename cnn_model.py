@@ -50,7 +50,7 @@ class MainModel(nn.Module):
             x = self.pool(F.relu(self.conv3(x)))
             return x.view(1, -1).size(1)
         
-# main model:
+# variant 1:
 # number of convolutional layers: 2
 # conv1: 3x3 kernel
 # max pooling: 2x2 kernel (better performance)
