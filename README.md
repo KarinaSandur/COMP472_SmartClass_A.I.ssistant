@@ -64,6 +64,7 @@ Link to repo: https://github.com/KarinaSandur/COMP472_SmartClass_A.I.ssistant
   <li>Reports</li>
   <ul>
     <li>Contains a pdf of the report for Part 1 of the project.</li>
+    <li>Contains a pdf of the report for Part 2 of the project.</li>
   </ul>
 </ol>
 
