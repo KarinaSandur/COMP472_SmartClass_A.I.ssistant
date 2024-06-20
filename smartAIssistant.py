@@ -9,7 +9,7 @@ import os
 model = cnn_model.MainModel()
 
 # Load the model
-model.load_state_dict(torch.load("best_performing_model.pth"))
+model.load_state_dict(torch.load("best_model_MainModel.pth"))
 
 # Set the model to evaluation mode
 model.eval()
