@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import zipfile
 import tempfile
 
+# set random seed for consistent runs (if we want each run to be different, remove this part)
+torch.manual_seed(42)
 
 # Initialize models
 mainModel = cnn_model.MainModel()
@@ -95,7 +97,7 @@ if __name__ == "__main__":
             recall_micro = recall_score(y_true, y_pred, average='micro')
             f1_micro = f1_score(y_true, y_pred, average='micro')
 
-            # Create  confusion matrix
+            # Create confusion matrix and display it
             cm = create_confusion_matrix(y_true, y_pred)
             visualize_confusion_matrix(cm, name)
 
@@ -152,4 +154,24 @@ if __name__ == "__main__":
         ax.axis('off')  # Hide axes
         ax.table(cellText=data, loc='center')
 
+        # Display table
         plt.show()
+
+        # Print out message that figure display is complete
+        print("Finished displaying all figures!")
+
+        # determine the best model based on overall performance across all metrics
+        # the sum of all metrics except the confusion matrix is calculated for each model,
+        # the model with the highest sum of these metrics is considered the best model
+        best_model_name = max(results, key=lambda x: sum(results[x][metric] for metric in results[x] if metric != 'confusion_matrix'))
+        best_model = models[best_model_name]
+        best_model_metrics = results[best_model_name]
+
+        # Print out which is the best model
+        print("The best model is: " + best_model_name)
+
+        # save the best performing model out of the three (main model, variant 1, variant 2)
+        torch.save(best_model.state_dict(), 'best_performing_model.pth')
+
+        # Print out confirmation message
+        print("Finished evaluating all models and saving the best one!")
