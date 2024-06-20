@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import zipfile
 import tempfile
 
+# set random seed for consistent runs (if we want each run to be different, remove this part)
+torch.manual_seed(42)
 
 # Initialize models
 mainModel = cnn_model.MainModel()
@@ -153,3 +155,13 @@ if __name__ == "__main__":
         ax.table(cellText=data, loc='center')
 
         plt.show()
+
+        # determine the best model based on overall performance across all metrics
+        # the sum of all metrics except the confusion matrix is calculated for each model,
+        # the model with the highest sum of these metrics is considered the best model
+        # best_model_name = max(results, key=lambda x: sum(results[x][metric] for metric in results[x] if metric != 'confusion_matrix'))
+        # best_model = models[best_model_name]
+        # best_model_metrics = results[best_model_name]
+
+        # # save the best performing model out of the three (main model, variant 1, variant 2)
+        # torch.save(best_model.state_dict(), 'best_performing_model.pth')
