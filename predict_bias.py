@@ -35,9 +35,9 @@ if __name__ == "__main__":
     # Obtain folder paths where data is located from user
     clean_data_age = input("Enter the path where you Clean Data Age folder is located: ")
     clean_data_gender = input("Enter the path where you Clean Data Gender folder is located: ")
+    
+    # Initialize batch size
     batch_size = 32
-
-    # count_files_in_folders(data_dir)
 
     # Input paths where data is located
     paths = {
@@ -54,6 +54,7 @@ if __name__ == "__main__":
     # Declare results
     results = {}
 
+    # Obtains metrics for every folder in every path given as input
     for data_dir in paths:  
         with tempfile.TemporaryDirectory() as temp_dir:
             for folder in os.listdir(data_dir):
@@ -63,16 +64,16 @@ if __name__ == "__main__":
                     print(f"Unzipped files from {folder_path} to {temp_dir}")
                     dataset = cnn_model.load_data(temp_dir)
 
-                    # split dataset into training 70%, validation 15%, and testing 15%
+                    # Split dataset into training 70%, validation 15%, and testing 15%
                     train_data, test_data = train_test_split(dataset, test_size=0.3, random_state=42)
                     val_data, test_data = train_test_split(test_data, test_size=0.5, random_state=42)
                     
-                    # create data loaders for training, validation, and testing sets
+                    # Create data loaders for training, validation, and testing sets
                     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
                     val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=False)
                     test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=False)
 
-                    # for name, model in models.items():
+                    # Evaluate using main model
                     mainModel.eval()
                     y_true = []
                     y_pred = []
@@ -84,12 +85,13 @@ if __name__ == "__main__":
                             y_true.extend(labels.numpy())
                             y_pred.extend(predicted.numpy())
 
-                    # calculate macro metrics
+                    # Calculate macro metrics
                     accuracy = accuracy_score(y_true, y_pred)
                     precision_macro = precision_score(y_true, y_pred, average='macro')
                     recall_macro = recall_score(y_true, y_pred, average='macro')
                     f1_macro = f1_score(y_true, y_pred, average='macro')
 
+                    # Save metrics in results
                     results[folder] = {
                         'accuracy': accuracy,
                         'precision_macro': precision_macro,
@@ -141,6 +143,12 @@ if __name__ == "__main__":
     age_recall_avg = round(((young_recall_macro + middle_aged_recall_macro + senior_recall_macro)/3), 4)
     age_f1_avg = round(((young_f1_macro + middle_aged_f1_macro + senior_f1_macro)/3), 4)
 
+    # Calculating Averages for Gender Metrics
+    gender_accuracy_avg = round(((men_accuracy + women_accuracy)/2), 4)
+    gender_precision_avg = round(((men_precision_macro + women_precision_macro)/2), 4)
+    gender_recall_avg = round(((men_recall_macro + women_recall_macro)/2), 4)
+    gender_f1_avg = round(((men_f1_macro + women_f1_macro)/2), 4)
+
     # Initialize data that will go in table
     data = [
         ['Group', '# Images', 'Accuracy', 'Precision', 'Recall', 'F1-Score'],
@@ -150,6 +158,7 @@ if __name__ == "__main__":
         ["Total/Average", "30", age_accuracy_avg, age_precision_avg, age_recall_avg, age_f1_avg],
         ["Male", "10", men_accuracy, men_precision_macro, men_recall_macro, men_f1_macro],
         ["Female", "10", women_accuracy, women_precision_macro, women_recall_macro, women_f1_macro],
+        ["Total/Average", "30", gender_accuracy_avg, gender_precision_avg, gender_recall_avg, gender_f1_avg],
     ]
 
     # Create table
