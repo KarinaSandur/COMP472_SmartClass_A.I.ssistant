@@ -81,11 +81,6 @@ if __name__ == "__main__":
                 recall_macro = recall_score(y_true, y_pred, average='macro')
                 f1_macro = f1_score(y_true, y_pred, average='macro')
 
-
-                # Create confusion matrix and display it
-                # cm = create_confusion_matrix(y_true, y_pred)
-                # visualize_confusion_matrix(cm, "Test")
-
                 results[folder] = {
                     'accuracy': accuracy,
                     'precision_macro': precision_macro,
@@ -94,3 +89,39 @@ if __name__ == "__main__":
                 }
 
                 print(results)
+    
+
+    # Results from different age groups
+    young_info = results.get("young",{})
+    young_accuracy = round(young_info.get("accuracy"), 4)
+    young_precision_macro = round(young_info.get("precision_macro"), 4)
+    young_recall_macro = round(young_info.get("recall_macro"), 4)
+    young_f1_macro = round(young_info.get("f1_macro"), 4)
+
+    middle_aged_info = results.get("middle-aged",{})
+    middle_aged_accuracy = round(middle_aged_info.get("accuracy"), 4)
+    middle_aged_precision_macro = round(middle_aged_info.get("precision_macro"), 4)
+    middle_aged_recall_macro = round(middle_aged_info.get("recall_macro"), 4)
+    middle_aged_f1_macro = round(middle_aged_info.get("f1_macro"), 4)
+
+    senior_info = results.get("senior",{})
+    senior_accuracy = round(senior_info.get("accuracy"), 4)
+    senior_precision_macro = round(senior_info.get("precision_macro"), 4)
+    senior_recall_macro = round(senior_info.get("recall_macro"), 4)
+    senior_f1_macro = round(senior_info.get("f1_macro"), 4)
+
+    # Initialize data that will go in table
+    data = [
+        ['Group', '# Images', 'Accuracy', 'Precision', 'Recall', 'F1-Score'],
+        ["Young", "10", young_accuracy, young_precision_macro, young_recall_macro, young_f1_macro],
+        ["Middle-Aged", "10", middle_aged_accuracy, middle_aged_precision_macro, middle_aged_recall_macro, middle_aged_f1_macro],
+        ["Senior", "10", senior_accuracy, senior_precision_macro, senior_recall_macro, senior_f1_macro],
+    ]
+
+    # Create table
+    fig, ax = plt.subplots()
+    ax.axis('off')  # Hide axes
+    ax.table(cellText=data, loc='center')
+
+    # Display table
+    plt.show()
