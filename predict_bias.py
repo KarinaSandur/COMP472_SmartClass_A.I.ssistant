@@ -104,11 +104,7 @@ if __name__ == "__main__":
                         'f1_macro': f1_macro,
                     }
 
-    print(results)
-    print("\n")
-    print("\n")
-    print(count_images)
-    
+    print("Generating table of metrics....")
 
     # Number of Images for each age group
     num_of_young = (count_images.get('young')).get("Number of Images")
@@ -166,22 +162,33 @@ if __name__ == "__main__":
     gender_recall_avg = round(((men_recall_macro + women_recall_macro)/2), 4)
     gender_f1_avg = round(((men_f1_macro + women_f1_macro)/2), 4)
 
+    # Overall System Calculations
+    total_images = total_gender + total_age
+    avg_overall_accuracy = round(((young_accuracy + middle_aged_accuracy + senior_accuracy + men_accuracy + women_accuracy)/5),4)
+    avg_overall_precision = round(((young_precision_macro + middle_aged_precision_macro + senior_precision_macro + men_precision_macro + women_precision_macro)/5),4)
+    avg_overall_recall = round(((young_recall_macro + middle_aged_recall_macro + senior_recall_macro + men_recall_macro + women_recall_macro)/5),4)
+    avg_overall_f1 = round(((young_f1_macro + middle_aged_f1_macro + senior_f1_macro + men_f1_macro + women_f1_macro)/5),4)
+
     # Initialize data that will go in table
     data = [
-        ['Group', '# Images', 'Accuracy', 'Precision', 'Recall', 'F1-Score'],
-        ["Young", num_of_young, young_accuracy, young_precision_macro, young_recall_macro, young_f1_macro],
-        ["Middle-Aged", num_of_middle_aged, middle_aged_accuracy, middle_aged_precision_macro, middle_aged_recall_macro, middle_aged_f1_macro],
-        ["Senior", num_of_senior, senior_accuracy, senior_precision_macro, senior_recall_macro, senior_f1_macro],
-        ["Total/Average", total_age, age_accuracy_avg, age_precision_avg, age_recall_avg, age_f1_avg],
-        ["Male", num_of_men, men_accuracy, men_precision_macro, men_recall_macro, men_f1_macro],
-        ["Female", num_of_women, women_accuracy, women_precision_macro, women_recall_macro, women_f1_macro],
-        ["Total/Average", total_gender, gender_accuracy_avg, gender_precision_avg, gender_recall_avg, gender_f1_avg],
+        ['Attribute', 'Group', '# Images', 'Accuracy', 'Precision', 'Recall', 'F1-Score'],
+        ['Age',"Young", num_of_young, young_accuracy, young_precision_macro, young_recall_macro, young_f1_macro],
+        ['Age', "Middle-Aged", num_of_middle_aged, middle_aged_accuracy, middle_aged_precision_macro, middle_aged_recall_macro, middle_aged_f1_macro],
+        ['Age',"Senior", num_of_senior, senior_accuracy, senior_precision_macro, senior_recall_macro, senior_f1_macro],
+        ['Age',"Total/Average", total_age, age_accuracy_avg, age_precision_avg, age_recall_avg, age_f1_avg],
+        ['Gender',"Male", num_of_men, men_accuracy, men_precision_macro, men_recall_macro, men_f1_macro],
+        ['Gender',"Female", num_of_women, women_accuracy, women_precision_macro, women_recall_macro, women_f1_macro],
+        ['Gender',"Total/Average", total_gender, gender_accuracy_avg, gender_precision_avg, gender_recall_avg, gender_f1_avg],
+        ['Overall System',"Total/Average", total_images, avg_overall_accuracy, avg_overall_precision, avg_overall_recall, avg_overall_f1],
+        
     ]
 
     # Create table
-    fig, ax = plt.subplots()
-    ax.axis('off')  # Hide axes
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.axis('off')
     ax.table(cellText=data, loc='center')
 
     # Display table
     plt.show()
+
+    print("Done!")
