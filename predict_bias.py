@@ -14,15 +14,6 @@ import numpy as np
 from evaluateModels import create_confusion_matrix, visualize_confusion_matrix
 
 
-# def unzip_files(data_dir, temp_dir):
-#     folders = ['angry', 'focused', 'happy', 'neutral']
-#     for folder in folders:
-#         zip_path = os.path.join(data_dir, f"{folder}.zip")
-#         if os.path.exists(zip_path):
-#             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-#                 zip_ref.extractall(os.path.join(temp_dir, folder))
-#         else:
-#             print(f"File not found: {zip_path}")
 torch.manual_seed(42)
 
 def count_files_in_folders(directory):
@@ -72,45 +63,34 @@ if __name__ == "__main__":
                 val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=False)
                 test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=False)
 
-                # Evaluate the models
-                models = {
-                    'Main Model': mainModel
-                    # 'Variant 1': var1Model,
-                    # 'Variant 2': var2Model
+                # for name, model in models.items():
+                mainModel.eval()
+                y_true = []
+                y_pred = []
+
+                with torch.no_grad():
+                    for inputs, labels in test_loader:
+                        outputs = mainModel(inputs)
+                        _, predicted = torch.max(outputs, 1)
+                        y_true.extend(labels.numpy())
+                        y_pred.extend(predicted.numpy())
+
+                # calculate macro metrics
+                accuracy = accuracy_score(y_true, y_pred)
+                precision_macro = precision_score(y_true, y_pred, average='macro')
+                recall_macro = recall_score(y_true, y_pred, average='macro')
+                f1_macro = f1_score(y_true, y_pred, average='macro')
+
+
+                # Create confusion matrix and display it
+                # cm = create_confusion_matrix(y_true, y_pred)
+                # visualize_confusion_matrix(cm, "Test")
+
+                results[folder] = {
+                    'accuracy': accuracy,
+                    'precision_macro': precision_macro,
+                    'recall_macro': recall_macro,
+                    'f1_macro': f1_macro,
                 }
 
-                for name, model in models.items():
-                    model.eval()
-                    y_true = []
-                    y_pred = []
-
-                    with torch.no_grad():
-                        for inputs, labels in test_loader:
-                            outputs = model(inputs)
-                            _, predicted = torch.max(outputs, 1)
-                            y_true.extend(labels.numpy())
-                            y_pred.extend(predicted.numpy())
-
-                    # calculate metrics: macro and micro
-                    accuracy = accuracy_score(y_true, y_pred)
-                    precision_macro = precision_score(y_true, y_pred, average='macro')
-                    recall_macro = recall_score(y_true, y_pred, average='macro')
-                    f1_macro = f1_score(y_true, y_pred, average='macro')
-                    precision_micro = precision_score(y_true, y_pred, average='micro')
-                    recall_micro = recall_score(y_true, y_pred, average='micro')
-                    f1_micro = f1_score(y_true, y_pred, average='micro')
-
-                    # Create confusion matrix and display it
-                    cm = create_confusion_matrix(y_true, y_pred)
-                    visualize_confusion_matrix(cm, name)
-
-                    results[name] = {
-                        'accuracy': accuracy,
-                        'precision_macro': precision_macro,
-                        'recall_macro': recall_macro,
-                        'f1_macro': f1_macro,
-                        'precision_micro': precision_micro,
-                        'recall_micro': recall_micro,
-                        'f1_micro': f1_micro,
-                        'confusion_matrix': cm
-                    }
+                print(results)
