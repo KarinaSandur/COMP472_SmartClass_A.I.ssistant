@@ -11,8 +11,6 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import matplotlib.pyplot as plt
 import numpy as np
 
-from evaluateModels import create_confusion_matrix, visualize_confusion_matrix
-
 
 torch.manual_seed(42)
 
@@ -110,12 +108,19 @@ if __name__ == "__main__":
     senior_recall_macro = round(senior_info.get("recall_macro"), 4)
     senior_f1_macro = round(senior_info.get("f1_macro"), 4)
 
+    # Calculating Averages for Age Group Metrics
+    age_accuracy_avg = round(((young_accuracy + middle_aged_accuracy + senior_accuracy)/3), 4)
+    age_precision_avg = round(((young_precision_macro + middle_aged_precision_macro + senior_precision_macro)/3), 4)
+    age_recall_avg = round(((young_recall_macro + middle_aged_recall_macro + senior_recall_macro)/3), 4)
+    age_f1_avg = round(((young_f1_macro + middle_aged_f1_macro + senior_f1_macro)/3), 4)
+
     # Initialize data that will go in table
     data = [
         ['Group', '# Images', 'Accuracy', 'Precision', 'Recall', 'F1-Score'],
         ["Young", "10", young_accuracy, young_precision_macro, young_recall_macro, young_f1_macro],
         ["Middle-Aged", "10", middle_aged_accuracy, middle_aged_precision_macro, middle_aged_recall_macro, middle_aged_f1_macro],
         ["Senior", "10", senior_accuracy, senior_precision_macro, senior_recall_macro, senior_f1_macro],
+        ["Total/Average", "30", age_accuracy_avg, age_precision_avg, age_recall_avg, age_f1_avg],
     ]
 
     # Create table
