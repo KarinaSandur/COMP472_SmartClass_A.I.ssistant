@@ -14,20 +14,12 @@ import numpy as np
 
 torch.manual_seed(42)
 
-def count_files_in_folders(directory):
-    for folder in os.listdir(directory):
-        folder_path = os.path.join(directory, folder)
-        if os.path.isdir(folder_path):
-            num_files = 0
-            for root, _, files in os.walk(folder_path):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    if zipfile.is_zipfile(file_path):
-                        with zipfile.ZipFile(file_path, 'r') as zip_ref:
-                            num_files += len(zip_ref.namelist())
-                    else:
-                        num_files += 1
-            print(f"Folder '{folder}' contains {num_files} files.")
+
+def count_files(directory):
+    num_files = 0
+    for root, dirs, files in os.walk(directory):
+        num_files += len(files)
+    return num_files
 
 
 if __name__ == "__main__":
@@ -53,6 +45,7 @@ if __name__ == "__main__":
 
     # Declare results
     results = {}
+    count_images = {}
 
     # Obtains metrics for every folder in every path given as input
     for data_dir in paths:  
@@ -60,8 +53,20 @@ if __name__ == "__main__":
             for folder in os.listdir(data_dir):
                 folder_path = os.path.join(data_dir, folder)
                 if os.path.isdir(folder_path):
+
+                    # Unzip Files
                     cnn_model.unzip_files(folder_path, temp_dir)
                     print(f"Unzipped files from {folder_path} to {temp_dir}")
+
+                    # Get number of images in file
+                    num_of_images = count_files(temp_dir)
+
+                    # Save number of images in file
+                    count_images[folder] = {
+                        'Number of Images': num_of_images
+                    }
+
+                    # Load dataset
                     dataset = cnn_model.load_data(temp_dir)
 
                     # Split dataset into training 70%, validation 15%, and testing 15%
@@ -91,7 +96,7 @@ if __name__ == "__main__":
                     recall_macro = recall_score(y_true, y_pred, average='macro')
                     f1_macro = f1_score(y_true, y_pred, average='macro')
 
-                    # Save metrics in results
+                    # Save macro metrics in results
                     results[folder] = {
                         'accuracy': accuracy,
                         'precision_macro': precision_macro,
@@ -102,7 +107,19 @@ if __name__ == "__main__":
     print(results)
     print("\n")
     print("\n")
+    print(count_images)
     
+
+    # Number of Images for each age group
+    num_of_young = (count_images.get('young')).get("Number of Images")
+    num_of_middle_aged = (count_images.get('middle-aged')).get("Number of Images")
+    num_of_senior = (count_images.get('senior')).get("Number of Images")
+    total_age = num_of_young + num_of_middle_aged + num_of_senior
+
+    # Number of Images for each gender
+    num_of_men = (count_images.get('men')).get("Number of Images")
+    num_of_women = (count_images.get('women')).get("Number of Images")
+    total_gender = num_of_men + num_of_women
 
     # Results from different age groups
     young_info = results.get("young",{})
@@ -152,13 +169,13 @@ if __name__ == "__main__":
     # Initialize data that will go in table
     data = [
         ['Group', '# Images', 'Accuracy', 'Precision', 'Recall', 'F1-Score'],
-        ["Young", "10", young_accuracy, young_precision_macro, young_recall_macro, young_f1_macro],
-        ["Middle-Aged", "10", middle_aged_accuracy, middle_aged_precision_macro, middle_aged_recall_macro, middle_aged_f1_macro],
-        ["Senior", "10", senior_accuracy, senior_precision_macro, senior_recall_macro, senior_f1_macro],
-        ["Total/Average", "30", age_accuracy_avg, age_precision_avg, age_recall_avg, age_f1_avg],
-        ["Male", "10", men_accuracy, men_precision_macro, men_recall_macro, men_f1_macro],
-        ["Female", "10", women_accuracy, women_precision_macro, women_recall_macro, women_f1_macro],
-        ["Total/Average", "30", gender_accuracy_avg, gender_precision_avg, gender_recall_avg, gender_f1_avg],
+        ["Young", num_of_young, young_accuracy, young_precision_macro, young_recall_macro, young_f1_macro],
+        ["Middle-Aged", num_of_middle_aged, middle_aged_accuracy, middle_aged_precision_macro, middle_aged_recall_macro, middle_aged_f1_macro],
+        ["Senior", num_of_senior, senior_accuracy, senior_precision_macro, senior_recall_macro, senior_f1_macro],
+        ["Total/Average", total_age, age_accuracy_avg, age_precision_avg, age_recall_avg, age_f1_avg],
+        ["Male", num_of_men, men_accuracy, men_precision_macro, men_recall_macro, men_f1_macro],
+        ["Female", num_of_women, women_accuracy, women_precision_macro, women_recall_macro, women_f1_macro],
+        ["Total/Average", total_gender, gender_accuracy_avg, gender_precision_avg, gender_recall_avg, gender_f1_avg],
     ]
 
     # Create table
