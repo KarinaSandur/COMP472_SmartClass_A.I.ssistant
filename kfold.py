@@ -118,6 +118,7 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             best_model_state = model.state_dict()
+            # to avoid updating the best_model_MainModel file, comment out the line below
             torch.save(best_model_state, f"best_model_{model.__class__.__name__}.pth")
 
         early_stopping(val_loss / len(val_loader))
