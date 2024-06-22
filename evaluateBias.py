@@ -18,7 +18,9 @@ torch.manual_seed(42)
 def count_files(directory):
     num_files = 0
     for root, dirs, files in os.walk(directory):
-        num_files += len(files)
+        for filename in files:
+            if filename.lower().endswith('.jpg'):
+                num_files += 1
     return num_files
 
 
@@ -49,11 +51,11 @@ if __name__ == "__main__":
 
     # Obtains metrics for every folder in every path given as input
     for data_dir in paths:  
-        with tempfile.TemporaryDirectory() as temp_dir:
-            for folder in os.listdir(data_dir):
-                folder_path = os.path.join(data_dir, folder)
-                if os.path.isdir(folder_path):
-
+        
+        for folder in os.listdir(data_dir):
+            folder_path = os.path.join(data_dir, folder)
+            if os.path.isdir(folder_path):
+                with tempfile.TemporaryDirectory() as temp_dir:
                     # Unzip Files
                     cnn_model.unzip_files(folder_path, temp_dir)
                     print(f"Unzipped files from {folder_path} to {temp_dir}")
@@ -104,6 +106,7 @@ if __name__ == "__main__":
                         'f1_macro': f1_macro,
                     }
 
+    print(count_images)
     print("Generating table of metrics....")
 
     # Number of Images for each age group
