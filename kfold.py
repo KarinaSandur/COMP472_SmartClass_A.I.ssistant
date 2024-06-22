@@ -113,21 +113,20 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
                 loss = criterion(outputs, labels)
                 val_loss += loss.item()
 
-        print(f"Epoch {epoch + 1}, Training Loss: {running_loss / len(train_loader)}, Validation Loss: {val_loss / len(val_loader)}")
+        val_loss /= len(val_loader)
+        print(f"Epoch {epoch + 1}, Training Loss: {running_loss / len(train_loader)}, Validation Loss: {val_loss}")
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             best_model_state = model.state_dict()
-            # to avoid updating the best_model_MainModel file, comment out the line below
-            torch.save(best_model_state, f"best_model_{model.__class__.__name__}.pth")
 
-        early_stopping(val_loss / len(val_loader))
+        early_stopping(val_loss)
         if early_stopping.early_stop:
             print("Early stopping")
             break
 
     model.load_state_dict(best_model_state)
-    return model
+    return model, best_val_loss
 
 # Create confusion matrix
 def create_confusion_matrix(y_true, y_pred):
@@ -156,7 +155,9 @@ def k_fold_cross_validation(model_class, dataset, k=10, num_epochs=10, batch_siz
     kfold = KFold(n_splits=k, shuffle=True, random_state=42)
     fold_results = []
 
-    # iterate over each fold
+    best_val_loss = float('inf')
+    best_model_state = None
+
     for fold, (train_idx, test_idx) in enumerate(kfold.split(dataset)):
         print(f"Fold {fold + 1}")
 
@@ -171,15 +172,17 @@ def k_fold_cross_validation(model_class, dataset, k=10, num_epochs=10, batch_siz
         val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=False)
         test_loader = DataLoader(test_subset, batch_size=batch_size, shuffle=False)
 
-        # initialize model, loss criterion, and optimizer INSIDE the loop
+        # initialize model, loss criterion, and optimizer inside the loop
         model = model_class()
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-        # train model using the training and validation loaders
-        model = train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs)
+        model, val_loss = train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs)
 
-        # evaluate model on test set
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            best_model_state = model.state_dict()
+
         model.eval()
         y_true = []
         y_pred = []
@@ -206,6 +209,9 @@ def k_fold_cross_validation(model_class, dataset, k=10, num_epochs=10, batch_siz
 
         # append metrics to the fold results
         fold_results.append((accuracy, precision_macro, recall_macro, f1_macro, precision_micro, recall_micro, f1_micro))
+
+    # save the best model after all folds are completed
+    torch.save(best_model_state, 'k_fold_best_model.pth')
 
     return fold_results
 
