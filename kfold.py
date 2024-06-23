@@ -238,7 +238,8 @@ if __name__ == "__main__":
         print("-" * 90)
         for i, (acc, prec_macro, rec_macro, f1_macro, prec_micro, rec_micro, f1_micro) in enumerate(fold_results):
             print(f"{i + 1:<5}| {prec_macro:.4f}          | {rec_macro:.4f}        | {f1_macro:.4f}   | {prec_micro:.4f}           | {rec_micro:.4f}         | {f1_micro:.4f}   | {acc:.4f}")
-            results[i] = {
+            fold = i + 1
+            results[fold] = {
                 'precision_macro': prec_macro,
                 'recall_macro': rec_macro,
                 'f1_macro': f1_macro,
@@ -262,7 +263,7 @@ if __name__ == "__main__":
         print(f"Accuracy: {avg_metrics[0]:.4f}")
 
     # Fold 1 Metrics
-    fold1_info = results.get("1", {})
+    fold1_info = results.get(1, {})
     fold1_prec_macro = round(fold1_info.get("precision_macro"), 4)
     fold1_recall_macro = round(fold1_info.get("recall_macro"), 4)
     fold1_f1_macro = round(fold1_info.get("f1_macro"), 4)
@@ -272,7 +273,7 @@ if __name__ == "__main__":
     fold1_accuracy = round(fold1_info.get("accuracy"), 4)
 
     # Fold 2 Metrics
-    fold2_info = results.get("2", {})
+    fold2_info = results.get(2, {})
     fold2_prec_macro = round(fold2_info.get("precision_macro"), 4)
     fold2_recall_macro = round(fold2_info.get("recall_macro"), 4)
     fold2_f1_macro = round(fold2_info.get("f1_macro"), 4)
@@ -282,7 +283,7 @@ if __name__ == "__main__":
     fold2_accuracy = round(fold2_info.get("accuracy"), 4)
 
     # Fold 3 Metrics
-    fold3_info = results.get("3", {})
+    fold3_info = results.get(3, {})
     fold3_prec_macro = round(fold3_info.get("precision_macro"), 4)
     fold3_recall_macro = round(fold3_info.get("recall_macro"), 4)
     fold3_f1_macro = round(fold3_info.get("f1_macro"), 4)
@@ -292,7 +293,7 @@ if __name__ == "__main__":
     fold3_accuracy = round(fold3_info.get("accuracy"), 4)
 
     # Fold 4 Metrics
-    fold4_info = results.get("4", {})
+    fold4_info = results.get(4, {})
     fold4_prec_macro = round(fold4_info.get("precision_macro"), 4)
     fold4_recall_macro = round(fold4_info.get("recall_macro"), 4)
     fold4_f1_macro = round(fold4_info.get("f1_macro"), 4)
@@ -302,7 +303,7 @@ if __name__ == "__main__":
     fold4_accuracy = round(fold4_info.get("accuracy"), 4)
 
     # Fold 5 Metrics
-    fold5_info = results.get("5", {})
+    fold5_info = results.get(5, {})
     fold5_prec_macro = round(fold5_info.get("precision_macro"), 4)
     fold5_recall_macro = round(fold5_info.get("recall_macro"), 4)
     fold5_f1_macro = round(fold5_info.get("f1_macro"), 4)
@@ -312,7 +313,7 @@ if __name__ == "__main__":
     fold5_accuracy = round(fold5_info.get("accuracy"), 4)
 
     # Fold 6 Metrics
-    fold6_info = results.get("6", {})
+    fold6_info = results.get(6, {})
     fold6_prec_macro = round(fold6_info.get("precision_macro"), 4)
     fold6_recall_macro = round(fold6_info.get("recall_macro"), 4)
     fold6_f1_macro = round(fold6_info.get("f1_macro"), 4)
@@ -322,7 +323,7 @@ if __name__ == "__main__":
     fold6_accuracy = round(fold6_info.get("accuracy"), 4)
 
     # Fold 7 Metrics
-    fold7_info = results.get("7", {})
+    fold7_info = results.get(7, {})
     fold7_prec_macro = round(fold7_info.get("precision_macro"), 4)
     fold7_recall_macro = round(fold7_info.get("recall_macro"), 4)
     fold7_f1_macro = round(fold7_info.get("f1_macro"), 4)
@@ -332,7 +333,7 @@ if __name__ == "__main__":
     fold7_accuracy = round(fold7_info.get("accuracy"), 4)
 
     # Fold 8 Metrics
-    fold8_info = results.get("8", {})
+    fold8_info = results.get(8, {})
     fold8_prec_macro = round(fold8_info.get("precision_macro"), 4)
     fold8_recall_macro = round(fold8_info.get("recall_macro"), 4)
     fold8_f1_macro = round(fold8_info.get("f1_macro"), 4)
@@ -342,7 +343,7 @@ if __name__ == "__main__":
     fold8_accuracy = round(fold8_info.get("accuracy"), 4)
 
     # Fold 9 Metrics
-    fold9_info = results.get("9", {})
+    fold9_info = results.get(9, {})
     fold9_prec_macro = round(fold9_info.get("precision_macro"), 4)
     fold9_recall_macro = round(fold9_info.get("recall_macro"), 4)
     fold9_f1_macro = round(fold9_info.get("f1_macro"), 4)
@@ -352,7 +353,7 @@ if __name__ == "__main__":
     fold9_accuracy = round(fold9_info.get("accuracy"), 4)
 
     # Fold 10 Metrics
-    fold10_info = results.get("10", {})
+    fold10_info = results.get(10, {})
     fold10_prec_macro = round(fold10_info.get("precision_macro"), 4)
     fold10_recall_macro = round(fold10_info.get("recall_macro"), 4)
     fold10_f1_macro = round(fold10_info.get("f1_macro"), 4)
@@ -376,6 +377,8 @@ if __name__ == "__main__":
         ["9", fold9_prec_macro, fold9_recall_macro, fold9_f1_macro, fold9_prec_micro, fold9_recall_micro, fold9_f1_micro, fold9_accuracy],
         ["10", fold10_prec_macro, fold10_recall_macro, fold10_f1_macro, fold10_prec_micro, fold10_recall_micro, fold10_f1_micro, fold10_accuracy],
     ]
+
+    
 
     # Create table
     fig, ax = plt.subplots(figsize=(15, 10))
