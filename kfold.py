@@ -205,7 +205,7 @@ def k_fold_cross_validation(model_class, dataset, k=10, num_epochs=10, batch_siz
         f1_micro = f1_score(y_true, y_pred, average='micro')
 
         cm = create_confusion_matrix(y_true, y_pred)
-        visualize_confusion_matrix(cm, f"{model_class.__name__} - Fold {fold + 1}")
+        # visualize_confusion_matrix(cm, f"{model_class.__name__} - Fold {fold + 1}")
 
         # append metrics to the fold results
         fold_results.append((accuracy, precision_macro, recall_macro, f1_macro, precision_micro, recall_micro, f1_micro))
@@ -222,6 +222,8 @@ if __name__ == "__main__":
     batch_size = 32
     num_epochs = 10
 
+    results = {}
+
     with tempfile.TemporaryDirectory() as temp_dir:
         unzip_files(data_dir, temp_dir)
         dataset = load_data(temp_dir)
@@ -236,6 +238,17 @@ if __name__ == "__main__":
         print("-" * 90)
         for i, (acc, prec_macro, rec_macro, f1_macro, prec_micro, rec_micro, f1_micro) in enumerate(fold_results):
             print(f"{i + 1:<5}| {prec_macro:.4f}          | {rec_macro:.4f}        | {f1_macro:.4f}   | {prec_micro:.4f}           | {rec_micro:.4f}         | {f1_micro:.4f}   | {acc:.4f}")
+            results[i] = {
+                'precision_macro': prec_macro,
+                'recall_macro': rec_macro,
+                'f1_macro': f1_macro,
+                'precision_micro': prec_micro,
+                'recall_micro': rec_micro,
+                'f1_micro': f1_micro,
+                'accuracy': acc,
+            }
+            print(i)
+
 
         # Calculate and print the average metrics
         avg_metrics = np.mean(fold_results, axis=0)
@@ -247,3 +260,127 @@ if __name__ == "__main__":
         print(f"Micro Recall: {avg_metrics[5]:.4f}")
         print(f"Micro F1: {avg_metrics[6]:.4f}")
         print(f"Accuracy: {avg_metrics[0]:.4f}")
+
+    # Fold 1 Metrics
+    fold1_info = results.get("1", {})
+    fold1_prec_macro = round(fold1_info.get("precision_macro"), 4)
+    fold1_recall_macro = round(fold1_info.get("recall_macro"), 4)
+    fold1_f1_macro = round(fold1_info.get("f1_macro"), 4)
+    fold1_prec_micro = round(fold1_info.get("precision_micro"), 4)
+    fold1_recall_micro = round(fold1_info.get("recall_macro"), 4)
+    fold1_f1_micro = round(fold1_info.get("f1_micro"), 4)
+    fold1_accuracy = round(fold1_info.get("accuracy"), 4)
+
+    # Fold 2 Metrics
+    fold2_info = results.get("2", {})
+    fold2_prec_macro = round(fold2_info.get("precision_macro"), 4)
+    fold2_recall_macro = round(fold2_info.get("recall_macro"), 4)
+    fold2_f1_macro = round(fold2_info.get("f1_macro"), 4)
+    fold2_prec_micro = round(fold2_info.get("precision_micro"), 4)
+    fold2_recall_micro = round(fold2_info.get("recall_macro"), 4)
+    fold2_f1_micro = round(fold2_info.get("f1_micro"), 4)
+    fold2_accuracy = round(fold2_info.get("accuracy"), 4)
+
+    # Fold 3 Metrics
+    fold3_info = results.get("3", {})
+    fold3_prec_macro = round(fold3_info.get("precision_macro"), 4)
+    fold3_recall_macro = round(fold3_info.get("recall_macro"), 4)
+    fold3_f1_macro = round(fold3_info.get("f1_macro"), 4)
+    fold3_prec_micro = round(fold3_info.get("precision_micro"), 4)
+    fold3_recall_micro = round(fold3_info.get("recall_macro"), 4)
+    fold3_f1_micro = round(fold3_info.get("f1_micro"), 4)
+    fold3_accuracy = round(fold3_info.get("accuracy"), 4)
+
+    # Fold 4 Metrics
+    fold4_info = results.get("4", {})
+    fold4_prec_macro = round(fold4_info.get("precision_macro"), 4)
+    fold4_recall_macro = round(fold4_info.get("recall_macro"), 4)
+    fold4_f1_macro = round(fold4_info.get("f1_macro"), 4)
+    fold4_prec_micro = round(fold4_info.get("precision_micro"), 4)
+    fold4_recall_micro = round(fold4_info.get("recall_macro"), 4)
+    fold4_f1_micro = round(fold4_info.get("f1_micro"), 4)
+    fold4_accuracy = round(fold4_info.get("accuracy"), 4)
+
+    # Fold 5 Metrics
+    fold5_info = results.get("5", {})
+    fold5_prec_macro = round(fold5_info.get("precision_macro"), 4)
+    fold5_recall_macro = round(fold5_info.get("recall_macro"), 4)
+    fold5_f1_macro = round(fold5_info.get("f1_macro"), 4)
+    fold5_prec_micro = round(fold5_info.get("precision_micro"), 4)
+    fold5_recall_micro = round(fold5_info.get("recall_macro"), 4)
+    fold5_f1_micro = round(fold5_info.get("f1_micro"), 4)
+    fold5_accuracy = round(fold5_info.get("accuracy"), 4)
+
+    # Fold 6 Metrics
+    fold6_info = results.get("6", {})
+    fold6_prec_macro = round(fold6_info.get("precision_macro"), 4)
+    fold6_recall_macro = round(fold6_info.get("recall_macro"), 4)
+    fold6_f1_macro = round(fold6_info.get("f1_macro"), 4)
+    fold6_prec_micro = round(fold6_info.get("precision_micro"), 4)
+    fold6_recall_micro = round(fold6_info.get("recall_macro"), 4)
+    fold6_f1_micro = round(fold6_info.get("f1_micro"), 4)
+    fold6_accuracy = round(fold6_info.get("accuracy"), 4)
+
+    # Fold 7 Metrics
+    fold7_info = results.get("7", {})
+    fold7_prec_macro = round(fold7_info.get("precision_macro"), 4)
+    fold7_recall_macro = round(fold7_info.get("recall_macro"), 4)
+    fold7_f1_macro = round(fold7_info.get("f1_macro"), 4)
+    fold7_prec_micro = round(fold7_info.get("precision_micro"), 4)
+    fold7_recall_micro = round(fold7_info.get("recall_macro"), 4)
+    fold7_f1_micro = round(fold7_info.get("f1_micro"), 4)
+    fold7_accuracy = round(fold7_info.get("accuracy"), 4)
+
+    # Fold 8 Metrics
+    fold8_info = results.get("8", {})
+    fold8_prec_macro = round(fold8_info.get("precision_macro"), 4)
+    fold8_recall_macro = round(fold8_info.get("recall_macro"), 4)
+    fold8_f1_macro = round(fold8_info.get("f1_macro"), 4)
+    fold8_prec_micro = round(fold8_info.get("precision_micro"), 4)
+    fold8_recall_micro = round(fold8_info.get("recall_macro"), 4)
+    fold8_f1_micro = round(fold8_info.get("f1_micro"), 4)
+    fold8_accuracy = round(fold8_info.get("accuracy"), 4)
+
+    # Fold 9 Metrics
+    fold9_info = results.get("9", {})
+    fold9_prec_macro = round(fold9_info.get("precision_macro"), 4)
+    fold9_recall_macro = round(fold9_info.get("recall_macro"), 4)
+    fold9_f1_macro = round(fold9_info.get("f1_macro"), 4)
+    fold9_prec_micro = round(fold9_info.get("precision_micro"), 4)
+    fold9_recall_micro = round(fold9_info.get("recall_macro"), 4)
+    fold9_f1_micro = round(fold9_info.get("f1_micro"), 4)
+    fold9_accuracy = round(fold9_info.get("accuracy"), 4)
+
+    # Fold 10 Metrics
+    fold10_info = results.get("10", {})
+    fold10_prec_macro = round(fold10_info.get("precision_macro"), 4)
+    fold10_recall_macro = round(fold10_info.get("recall_macro"), 4)
+    fold10_f1_macro = round(fold10_info.get("f1_macro"), 4)
+    fold10_prec_micro = round(fold10_info.get("precision_micro"), 4)
+    fold10_recall_micro = round(fold10_info.get("recall_macro"), 4)
+    fold10_f1_micro = round(fold10_info.get("f1_micro"), 4)
+    fold10_accuracy = round(fold10_info.get("accuracy"), 4)
+
+
+    # Initialize data that will go in table
+    data = [
+        ['Fold', 'Macro Precision', 'Macro Recall', 'Macro F1', 'Micro Precision', 'Micro Recall', 'Micro F1', 'Accuracy'],
+        ["1", fold1_prec_macro, fold1_recall_macro, fold1_f1_macro, fold1_prec_micro, fold1_recall_micro, fold1_f1_micro, fold1_accuracy],
+        ["2", fold2_prec_macro, fold2_recall_macro, fold2_f1_macro, fold2_prec_micro, fold2_recall_micro, fold2_f1_micro, fold2_accuracy],
+        ["3", fold3_prec_macro, fold3_recall_macro, fold3_f1_macro, fold3_prec_micro, fold3_recall_micro, fold3_f1_micro, fold3_accuracy],
+        ["4", fold4_prec_macro, fold4_recall_macro, fold4_f1_macro, fold4_prec_micro, fold4_recall_micro, fold4_f1_micro, fold4_accuracy],
+        ["5", fold5_prec_macro, fold5_recall_macro, fold5_f1_macro, fold5_prec_micro, fold5_recall_micro, fold5_f1_micro, fold5_accuracy],
+        ["6", fold6_prec_macro, fold6_recall_macro, fold6_f1_macro, fold6_prec_micro, fold6_recall_micro, fold6_f1_micro, fold6_accuracy],
+        ["7", fold7_prec_macro, fold7_recall_macro, fold7_f1_macro, fold7_prec_micro, fold7_recall_micro, fold7_f1_micro, fold7_accuracy],
+        ["8", fold8_prec_macro, fold8_recall_macro, fold8_f1_macro, fold8_prec_micro, fold8_recall_micro, fold8_f1_micro, fold8_accuracy],
+        ["9", fold9_prec_macro, fold9_recall_macro, fold9_f1_macro, fold9_prec_micro, fold9_recall_micro, fold9_f1_micro, fold9_accuracy],
+        ["10", fold10_prec_macro, fold10_recall_macro, fold10_f1_macro, fold10_prec_micro, fold10_recall_micro, fold10_f1_micro, fold10_accuracy],
+    ]
+
+    # Create table
+    fig, ax = plt.subplots(figsize=(15, 10))
+    ax.axis('off')
+    ax.table(cellText=data, loc='center')
+
+    # Display table
+    plt.show()
