@@ -248,8 +248,6 @@ if __name__ == "__main__":
                 'f1_micro': f1_micro,
                 'accuracy': acc,
             }
-            print(i)
-
 
         # Calculate and print the average metrics
         avg_metrics = np.mean(fold_results, axis=0)
@@ -261,6 +259,15 @@ if __name__ == "__main__":
         print(f"Micro Recall: {avg_metrics[5]:.4f}")
         print(f"Micro F1: {avg_metrics[6]:.4f}")
         print(f"Accuracy: {avg_metrics[0]:.4f}")
+    
+    avg_macro_prec = f"{avg_metrics[1]:.4f}"
+    avg_macro_rec = f"{avg_metrics[2]:.4f}"
+    avg_macro_f1 = f"{avg_metrics[3]:.4f}"
+    avg_micro_prec = f"{avg_metrics[4]:.4f}"
+    avg_micro_rec = f"{avg_metrics[5]:.4f}"
+    avg_micro_f1 = f"{avg_metrics[6]:.4f}"
+    avg_acc = f"{avg_metrics[0]:.4f}"
+    
 
     # Fold 1 Metrics
     fold1_info = results.get(1, {})
@@ -376,6 +383,8 @@ if __name__ == "__main__":
         ["8", fold8_prec_macro, fold8_recall_macro, fold8_f1_macro, fold8_prec_micro, fold8_recall_micro, fold8_f1_micro, fold8_accuracy],
         ["9", fold9_prec_macro, fold9_recall_macro, fold9_f1_macro, fold9_prec_micro, fold9_recall_micro, fold9_f1_micro, fold9_accuracy],
         ["10", fold10_prec_macro, fold10_recall_macro, fold10_f1_macro, fold10_prec_micro, fold10_recall_micro, fold10_f1_micro, fold10_accuracy],
+        ["Average", avg_macro_prec, avg_macro_rec, avg_macro_f1, avg_micro_prec, avg_micro_rec, avg_micro_f1, avg_acc]
+        
     ]
 
     
