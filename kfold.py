@@ -165,14 +165,19 @@ def k_fold_cross_validation(model_class, dataset, k=10, num_epochs=10, batch_siz
         train_subset = Subset(dataset, train_idx)
         test_subset = Subset(dataset, test_idx)
 
-        # split the training subset into a training and validation set
-        train_data, val_data = train_test_split(train_subset, test_size=0.15, random_state=42)
+        # split the training subset into training and validation sets
+        # further divide the training set into a training subset and a validation subset
+        # train_data contains 85% of samples from train_subset using train_indices
+        # val_data contains 15% samples from train_subset using val_indices
+        train_indices, val_indices = train_test_split(list(range(len(train_subset))), test_size=0.15, random_state=42)
+        train_data = Subset(train_subset, train_indices)
+        val_data = Subset(train_subset, val_indices)
 
         train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
         val_loader = DataLoader(val_data, batch_size=batch_size, shuffle=False)
         test_loader = DataLoader(test_subset, batch_size=batch_size, shuffle=False)
 
-        # initialize model, loss criterion, and optimizer inside the loop
+        # initialize new model within each fold, loss criterion, and optimizer inside the loop
         model = model_class()
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -205,7 +210,7 @@ def k_fold_cross_validation(model_class, dataset, k=10, num_epochs=10, batch_siz
         f1_micro = f1_score(y_true, y_pred, average='micro')
 
         cm = create_confusion_matrix(y_true, y_pred)
-        # visualize_confusion_matrix(cm, f"{model_class.__name__} - Fold {fold + 1}")
+        visualize_confusion_matrix(cm, f"{model_class.__name__} - Fold {fold + 1}")
 
         # append metrics to the fold results
         fold_results.append((accuracy, precision_macro, recall_macro, f1_macro, precision_micro, recall_micro, f1_micro))
