@@ -3,22 +3,22 @@ import matplotlib.pyplot as mpl
 
 # Initialize data in bar graph
 num_angry = 687
-num_angry_train = (num_angry * 0.75)
+num_angry_train = (num_angry * 0.70)
 num_angry_test = (num_angry * 0.15)
 num_angry_val = (num_angry * 0.15)
 
 num_focused = 514
-num_focused_train = (num_focused * 0.75)
+num_focused_train = (num_focused * 0.70)
 num_focused_test = (num_focused * 0.15)
 num_focused_val = (num_focused * 0.15)
 
 num_happy = 540
-num_happy_train = (num_happy * 0.75)
+num_happy_train = (num_happy * 0.70)
 num_happy_test = (num_happy * 0.15)
 num_happy_val = (num_happy * 0.15)
 
 num_neutral = 582
-num_neutral_train = (num_neutral * 0.75)
+num_neutral_train = (num_neutral * 0.70)
 num_neutral_test = (num_neutral * 0.15)
 num_neutral_val = (num_neutral * 0.15)
 
