@@ -50,6 +50,29 @@ Link to repo: https://github.com/KarinaSandur/COMP472_SmartClass_A.I.ssistant
   <ul>
     <li>Contains 4 zip folders: angry, happy, neutral and focused</li>
     <li>The clean data folder contains the images for the four classes after data cleaning and labelling has been done.</li>
+    <li>Dataset from part 1 and 2</li>
+  </ul>
+
+  <li>Clean Data Age</li>
+  <ul>
+    <li>This folder is the 'Clean Data with Bias Mitigation' folder segmented based on the age attribute.</li>
+    <li>Contains 3 folders: young, middle-aged and senior. Each folder contains 4 zip folders: angry, happy, neutral and focused</li>
+    <li>Used in part 3</li>
+  </ul>
+
+  <li>Clean Data Gender</li>
+  <ul>
+    <li>This folder is the 'Clean Data with Bias Mitigation' folder segmented based on the gender attribute.</li>
+    <li>Contains 3 folders: men and women. Each folder contains 4 zip folders: angry, happy, neutral and focused</li>
+    <li>Used in part 3</li>
+  </ul>
+
+
+  <li>Clean Data with Bias Mitigation</li>
+  <ul>
+    <li>Contains 4 zip folders: angry, happy, neutral and focused</li>
+    <li>The clean data folder contains the images for the four classes after data cleaning, labelling and bias mitigation has been done</li>
+    <li>Dataset from part 3</li>
   </ul>
 </ol>
 
@@ -65,6 +88,7 @@ Link to repo: https://github.com/KarinaSandur/COMP472_SmartClass_A.I.ssistant
   <ul>
     <li>Contains a pdf of the report for Part 1 of the project.</li>
     <li>Contains a pdf of the report for Part 2 of the project.</li>
+    <li>Contains a pdf of the report for Part 3 of the project.</li>
   </ul>
 </ol>
 
@@ -121,21 +145,38 @@ Link to repo: https://github.com/KarinaSandur/COMP472_SmartClass_A.I.ssistant
     <li>Python script that takes folder path as input that expects to find one or more zip files in said folder.</li>
     <li>The script trains and validates three different models.</li>
     <li>The script evaluates the models by producing a confusion matrix for each and a table summarizing metrics for all models.</li>
-    <li>The script generates a .pth file of the best performance model of each model based on the validation set (it doesn't merely save the last one from the training process): best_model_MainModel.pth, best_model_Variant1.pth, and best_model_Variant2.pth. Afterwards, the script compares the metrics of all three .pth files and outputs the best one out of the three: best_performing_model.pth.</li>
+    <li>The script generates a .pth file of the best performance model of each model based on the validation set (it doesn't merely save the last one from the training process): best_model_MainModel.pth, best_model_Variant1.pth, and best_model_Variant2.pth.</li>
   </ul>
   
   <li>evaluateModels.py</li>
   <ul>
     <li>Python script that takes no input</li>
-    <li>Note that one must run the cnn_model.py file before running evaluateModel.py because it requires the .pth files cnn_model.py produces in order to run.</li>
+    <li>Note that one must run the cnn_model.py file before running evaluateModel.py because it requires all the .pth files cnn_model.py produces in order to run.</li>
     <li>The script loads best_model_MainModel.pth, best_model_Variant1.pth, and best_model_Variant2.pth and evaluates each model by producing a confusion matrix for each and a table summarizing metrics for all models.</li>
+    <li>Afterwards, the script compares the metrics of all three .pth files and outputs the best one out of the three: best_performing_model.pth.</li>
   </ul>
 
   <li>smartAIssistant.py</li>
   <ul>
     <li>Python script that takes an image path or a folder path containing images as input</li>
+    <li>Note that one must run the cnn_model.py file before running evaluateModel.py because it requires the best_model_MainModel.pth file the cnn_model.py produces in order to run.</li>
     <li>If one inputs an image path, the script will classify that image according to one of the 4 facial expressions and output the result/prediction.</li>
     <li>If one inputs an folder path, the script will classify each image in the folder path according to one of the 4 facial expressions and output the result/prediction for each.</li>
+  </ul>
+
+  <li>kfold.py</li>
+  <ul>
+    <li>Python script that takes folder path as input that expects to find one or more zip files in said folder.</li>
+    <li>The script trains and validates one model (main model) using k-fold technique</li>
+    <li>The script generates a .pth file called k_fold_best_model.pth</li>
+  </ul>
+
+  <li>evaluateBias.py</li>
+  <ul>
+    <li>Python script that takes two file paths as input: the file path to 'Clean_Data_Age' and the file path to 'Clean_Data_Gender'</li>
+    <li>Note that one must run the cnn_model.py file before running evaluateModel.py because it requires the best_model_MainModel.pth file the cnn_model.py produces in order to run.</li>
+    <li>The script loads best_model_MainModel.pth and evaluates the model on each group in each file path given by the user.</li>
+    <li>The script generates a table summarizing the performance of the model on every group.</li>
   </ul>
   
 </ol>
